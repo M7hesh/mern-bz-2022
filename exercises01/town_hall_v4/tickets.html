@@ -27,22 +27,22 @@
     	</ul>
     </nav>
 	<section>
-		<h1>Become a Member</h1>
-    	<form action="register_account.html" method="get"
+		<h1>Order Form</h1>
+    	<form action="register_account.	html" method="get"
         	name="registration_form" id="registration_form">
     		<fieldset>
-	        	<legend>Registration Information</legend>
+	        	<legend>Membership Informaton</legend>
 	        	<label for="email">E-Mail:</label>
 	        	<input type="email" name="email" id="email" autofocus required><br>
-	        	<label for="password">Password:</label>
+	        	<!-- <label for="password">Password:</label>
 	        	<input type="password" name="password" id="password" required
 	        	       pattern="[a-zA-Z0-9]{6,}"
 	                   placeholder="At least 6 letters or numbers" ><br>
 	        	<label for="verify">Verify Password:</label>
-	        	<input type="password" name="verify" id="verify" required><br>
-    		</fieldset>
-    		<fieldset>
-        		<legend>Member Information</legend>
+	        	<input type="password" name="verify" id="verify" required><br> -->
+    		<!-- </fieldset>
+    		<fieldset> -->
+        		<!-- <legend>Member Information</legend> -->
         		<label for="first_name">First Name:</label>
 				<input type="text" name="first_name" id="first_name" required><br>
 				<label for="last_name">Last Name:</label>
@@ -61,20 +61,38 @@
 				       pattern="\d{3}[\-]\d{3}[\-]\d{4}" title="Must be 999-999-999 format"><br>
 				</fieldset>
 			<fieldset>
-				<legend>Membership Information</legend>
-				<label for="membership_type">Membership Type:</label>
+				<legend>Ordering Information</legend>
+				<label for="membership_type">Order Type:</label>
 				<select name="membership_type" id="membership_type">
-				    <option value="j">Junior</option>
-				    <option value="r">Regular</option>            
-				    <option value="c">Charter</option>
+				    <option value="m">Member Package</option>
+				    <option value="d">Donor Package</option>            
+				    <option value="s">Single Tickets</option>
 				</select><br>
-				<label for="starting_date">Starting Date:</label>
-				<input type="date" name="starting_date" id="starting_date" required><br>
-				<label for="tickets">Tickets for Guests:</label>
-				<input type="number" name="tickets" id="tickets" value="2" min="1" max="4" placeholder="from 1 to 4"><br>
+				<!-- <label for="starting_date">Starting Date:</label>
+				<input type="date" name="starting_date" id="starting_date" required><br> -->
+				<label for="tickets">Number of Tickets:</label>
+				<input type="number" name="tickets" id="tickets" value="1" min="1" max="4" placeholder="from 1 to 4"><br>
+				</fieldset>
+				<fieldset>
+					<legend>Payment Method</legend>
+					<input name="bill_me" id="bill_me" type="radio">Bill Me
+					<input name="credit_card" id="credit_card" type="radio">Credit Card
+				</fieldset>
+				<fieldset>
+					<legend>Credit Card Information</legend>
+					<label for="card_type">Card Type:</label>
+					<select name="card_type" id="card_type">
+						<option value="visa">Visa</option>
+						<option value="mastercard">MasterCard</option>
+						<option value="discovery">Discovery</option>
+					</select><br>
+					<label for="card_number">Card Number:</label>
+					<input name="card_number" id="card_number" type="text" min="16" max="16" placeholder="16 digits" pattern="\d{16}"><br>
+					<label for="expiry_date">Expiration date:</label>
+					<input type="date" name="expiry_date" id="expiry_date" min="2010-01-01" max="2025-12-31">
 				</fieldset>
 				<fieldset id="buttons">
-				<legend>Submit Your Membership</legend>
+				<legend>Submit Your Order</legend>
 				<label>&nbsp;</label>
 				<input type="submit" id="submit" value="Submit">
 				<input type="reset" id="reset" value="Reset Fields"><br>

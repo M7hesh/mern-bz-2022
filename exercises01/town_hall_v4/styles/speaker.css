@@ -79,6 +79,10 @@ section {
 	width: 525px;
 	float: right;
 }
+iframe {
+	width: 525px;
+	height: 275px;
+}
 section h1 {
 	color: #800000;
 	font-size: 150%;
