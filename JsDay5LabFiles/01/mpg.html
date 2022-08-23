@@ -25,10 +25,16 @@
 				do {
 					var miles = prompt("Enter miles driven");
         	miles = parseFloat(miles);
+					if (isNaN(miles)||(miles < 0)){
+						alert("Miles should be a positive numeric value")
+					}
 				} while (isNaN(miles)||(miles < 0))
 				do {
 					var gallons = prompt("Enter gallons of gas used");
 					gallons = parseFloat(gallons)
+					if (isNaN(gallons)||(gallons < 0)){
+						alert("Gallons should be a positive numeric value")
+					}
 				} while(isNaN(gallons)||(gallons < 0))
 				var mpg = miles/gallons;
 				mpg = parseInt(mpg);
