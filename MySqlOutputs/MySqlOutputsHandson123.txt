@@ -1,0 +1,1343 @@
+mysql> CREATE DATABASE pubs
+    -> ;
+Query OK, 1 row affected (0.02 sec)
+
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| mysql              |
+| performance_schema |
+| pubs               |
+| sys                |
++--------------------+
+5 rows in set (0.04 sec)
+
+mysql> USE pubs;
+Database changed
+
+mysql> CREATE TABLE authors
+    ->  (au_id VARCHAR(11) PRIMARY KEY,
+    -> au_lname VARCHAR(40) NOT NULL,
+    -> au_fname VARCHAR(20) NOT NULL,
+    -> phone char(12) NOT NULL DEFAULT 'Unknown',
+    -> address varchar(40),
+    -> city varchar(20),
+    -> state char(2),
+    -> zip char(5),
+    -> contract tinyint NOT NULL);
+Query OK, 0 rows affected (0.06 sec)
+
+mysql> SHOW COLUMNS FROM authors;
++----------+-------------+------+-----+---------+-------+
+| Field    | Type        | Null | Key | Default | Extra |
++----------+-------------+------+-----+---------+-------+
+| au_id    | varchar(11) | NO   | PRI | NULL    |       |
+| au_lname | varchar(40) | NO   |     | NULL    |       |
+| au_fname | varchar(20) | NO   |     | NULL    |       |
+| phone    | char(12)    | NO   |     | Unknown |       |
+| address  | varchar(40) | YES  |     | NULL    |       |
+| city     | varchar(20) | YES  |     | NULL    |       |
+| state    | char(2)     | YES  |     | NULL    |       |
+| zip      | char(5)     | YES  |     | NULL    |       |
+| contract | tinyint     | NO   |     | NULL    |       |
++----------+-------------+------+-----+---------+-------+
+9 rows in set (0.00 sec)
+
+mysql> CREATE TABLE publishers
+    -> (pub_id char(4) PRIMARY KEY,
+    -> pub_name varchar(40) NULL,
+    -> city varchar(20) NULL,
+    -> state char(2) NULL,
+    -> country varchar(30) NULL DEFAULT 'USA');
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> SHOW COLUMNS FROM publishers;
++----------+-------------+------+-----+---------+-------+
+| Field    | Type        | Null | Key | Default | Extra |
++----------+-------------+------+-----+---------+-------+
+| pub_id   | char(4)     | NO   | PRI | NULL    |       |
+| pub_name | varchar(40) | YES  |     | NULL    |       |
+| city     | varchar(20) | YES  |     | NULL    |       |
+| state    | char(2)     | YES  |     | NULL    |       |
+| country  | varchar(30) | YES  |     | USA     |       |
++----------+-------------+------+-----+---------+-------+
+5 rows in set (0.00 sec)
+
+mysql> CREATE TABLE titles
+    -> (title_id varchar(10) PRIMARY KEY,
+    -> title varchar(80) NOT NULL,
+    -> type char(12) NOT NULL DEFAULT 'UNDECIDED',
+    -> pub_id char(4) NULL,
+    -> price decimal(10,4) NULL,
+    -> advance decimal(10,4) NULL,
+    -> royalty int NULL,
+    -> ttd_sales int NULL,
+    -> notes text NULL,
+    -> pubdate date NULL);
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> SHOW COLUMNS FROM titles
+    -> ;
++-----------+---------------+------+-----+-----------+-------+
+| Field     | Type          | Null | Key | Default   | Extra |
++-----------+---------------+------+-----+-----------+-------+
+| title_id  | varchar(10)   | NO   | PRI | NULL      |       |
+| title     | varchar(80)   | NO   |     | NULL      |       |
+| type      | char(12)      | NO   |     | UNDECIDED |       |
+| pub_id    | char(4)       | YES  |     | NULL      |       |
+| price     | decimal(10,4) | YES  |     | NULL      |       |
+| advance   | decimal(10,4) | YES  |     | NULL      |       |
+| royalty   | int           | YES  |     | NULL      |       |
+| ttd_sales | int           | YES  |     | NULL      |       |
+| notes     | text          | YES  |     | NULL      |       |
+| pubdate   | date          | YES  |     | NULL      |       |
++-----------+---------------+------+-----+-----------+-------+
+10 rows in set (0.00 sec)
+
+mysql> ALTER TABLE titles
+    -> ADD FOREIGN KEY (pub_id) REFERENCES publishers(pub_id);
+Query OK, 0 rows affected (0.07 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> SHOW COLUMNS FROM titles;
++-----------+---------------+------+-----+-----------+-------+
+| Field     | Type          | Null | Key | Default   | Extra |
++-----------+---------------+------+-----+-----------+-------+
+| title_id  | varchar(10)   | NO   | PRI | NULL      |       |
+| title     | varchar(80)   | NO   |     | NULL      |       |
+| type      | char(12)      | NO   |     | UNDECIDED |       |
+| pub_id    | char(4)       | YES  | MUL | NULL      |       |
+| price     | decimal(10,4) | YES  |     | NULL      |       |
+| advance   | decimal(10,4) | YES  |     | NULL      |       |
+| royalty   | int           | YES  |     | NULL      |       |
+| ttd_sales | int           | YES  |     | NULL      |       |
+| notes     | text          | YES  |     | NULL      |       |
+| pubdate   | date          | YES  |     | NULL      |       |
++-----------+---------------+------+-----+-----------+-------+
+10 rows in set (0.00 sec)
+
+mysql> CREATE TABLE titleauthor
+    -> (au_id varchar(11),
+    -> title_id varchar(10),
+    -> au_ord tinyint NULL,
+    -> royaltyper int NULL,
+    -> CONSTRAINT auid_fk FOREIGN KEY(au_id) REFERENCES authors(au_id),
+    -> CONSTRAINT titleid_fk FOREIGN KEY(title_id) REFERENCES titles(title_id),
+    -> CONSTRAINT auid_titleid_cpk PRIMARY KEY (au_id, title_id));
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> DESC titleauthor
+    -> ;
++------------+-------------+------+-----+---------+-------+
+| Field      | Type        | Null | Key | Default | Extra |
++------------+-------------+------+-----+---------+-------+
+| au_id      | varchar(11) | NO   | PRI | NULL    |       |
+| title_id   | varchar(10) | NO   | PRI | NULL    |       |
+| au_ord     | tinyint     | YES  |     | NULL    |       |
+| royaltyper | int         | YES  |     | NULL    |       |
++------------+-------------+------+-----+---------+-------+
+4 rows in set (0.00 sec)
+
+mysql> insert publishers values('0736', 'New Moon Books', 'Boston', 'MA', 'USA');
+Query OK, 1 row affected (0.02 sec)
+
+mysql> insert publishers values('0877', 'Binnet & Harley', 'Washington', 'DC', 'USA');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert publishers values('1389', 'Algodata Infosystems', 'Berkeley', 'DC', 'USA');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert publishers values('9952', 'Scootney Books', 'Ner York', 'NY', 'USA');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert publishers values('1622', 'Five Lakes Publishing', 'Chicago', 'IL', 'USA');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert publishers values('1756', 'Ramona Publishers', 'Dallas', 'TX', 'USA');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert publishers values('9901', 'GGG&G', 'Munchen', NULL, 'Germany');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert publishers values('9999', 'Lucerne Publishing', 'Paris', NULL, 'France');
+Query OK, 1 row affected (0.01 sec)
+
+
+mysql> select * from publishers
+    -> ;
++--------+-----------------------+------------+-------+---------+
+| pub_id | pub_name              | city       | state | country |
++--------+-----------------------+------------+-------+---------+
+| 0736   | New Moon Books        | Boston     | MA    | USA     |
+| 0877   | Binnet & Harley       | Washington | DC    | USA     |
+| 1389   | Algodata Infosystems  | Berkeley   | DC    | USA     |
+| 1622   | Five Lakes Publishing | Chicago    | IL    | USA     |
+| 1756   | Ramona Publishers     | Dallas     | TX    | USA     |
+| 9901   | GGG&G                 | Munchen    | NULL  | Germany |
+| 9952   | Scootney Books        | Ner York   | NY    | USA     |
+| 9999   | Lucerne Publishing    | Paris      | NULL  | France  |
++--------+-----------------------+------------+-------+---------+
+8 rows in set (0.00 sec)
+
+mysql> insert authors   values('409-56-7008', 'Bennet', 'Abraham', '415 658-9932',   '6223 Bateman St.', 'Berkeley', 'CA', '94705', 1);insert authors   values('213-46-8915', 'Green', 'Marjorie', '415 986-7020',   '309 63rd St. #411', 'Oakland', 'CA', '94618', 1);insert authors   values('238-95-7766', 'Carson', 'Cheryl', '415 548-7723',   '589 Darwin Ln.', 'Berkeley', 'CA', '94705', 1);insert authors   values('998-72-3567', 'Ringer', 'Albert', '801 826-0752',   '67 Seventh Av.', 'Salt Lake City', 'UT', '84152', 1);insert authors   values('899-46-2035', 'Ringer', 'Anne', '801 826-0752',   '67 Seventh Av.', 'Salt Lake City', 'UT', '84152', 1);insert authors   values('722-51-5454', 'DeFrance', 'Michel', '219 547-9982',   '3 Balding Pl.', 'Gary', 'IN', '46403', 1);insert authors   values('807-91-6654', 'Panteley', 'Sylvia', '301 946-8853',   '1956 Arlington Pl.', 'Rockville', 'MD', '20853', 1);insert authors   values('893-72-1158', 'McBadden', 'Heather',   '707 448-4982', '301 Putnam', 'Vacaville', 'CA', '95688', 0);insert authors   values('724-08-9931', 'Stringer', 'Dirk', '415 843-2991',   '5420 Telegraph Av.', 'Oakland', 'CA', '94609', 0);insert authors   values('274-80-9391', 'Straight', 'Dean', '415 834-2919',   '5420 College Av.', 'Oakland', 'CA', '94609', 1);insert authors   values('756-30-7391', 'Karsen', 'Livia', '415 534-9219',   '5720 McAuley St.', 'Oakland', 'CA', '94609', 1);insert authors   values('724-80-9391', 'MacFeather', 'Stearns', '415 354-7128',   '44 Upland Hts.', 'Oakland', 'CA', '94612', 1);insert authors   values('427-17-2319', 'Dull', 'Ann', '415 836-7128',   '3410 Blonde St.', 'Palo Alto', 'CA', '94301', 1);insert authors   values('672-71-3249', 'Yokomoto', 'Akiko', '415 935-4228',   '3 Silver Ct.', 'Walnut Creek', 'CA', '94595', 1);insert authors   values('267-41-2394', 'O''Leary', 'Michael', '408 286-2428',   '22 Cleveland Av. #14', 'San Jose', 'CA', '95128', 1);insert authors   values('472-27-2349', 'Gringlesby', 'Burt', '707 938-6445',   'PO Box 792', 'Covelo', 'CA', '95428', 3);insert authors   values('527-72-3246', 'Greene', 'Morningstar', '615 297-2723',   '22 Graybar House Rd.', 'Nashville', 'TN', '37215', 0);insert authors   values('172-32-1176', 'White', 'Johnson', '408 496-7223',   '10932 Bigge Rd.', 'Menlo Park', 'CA', '94025', 1);insert authors   values('712-45-1867', 'del Castillo', 'Innes', '615 996-8275',   '2286 Cram Pl. #86', 'Ann Arbor', 'MI', '48105', 1);insert authors   values('846-92-7186', 'Hunter', 'Sheryl', '415 836-7128',   '3410 Blonde St.', 'Palo Alto', 'CA', '94301', 1);insert authors   values('486-29-1786', 'Locksley', 'Charlene', '415 585-4620',   '18 Broadway Av.', 'San Francisco', 'CA', '94130', 1);insert authors   values('648-92-1872', 'Blotchet-Halls', 'Reginald', '503 745-6402',   '55 Hillsdale Bl.', 'Corvallis', 'OR', '97330', 1);insert authors   values('341-22-1782', 'Smith', 'Meander', '913 843-0462',   '10 Mississippi Dr.', 'Lawrence', 'KS', '66044', 0);
+Query OK, 1 row affected (0.01 sec)
+
+Query OK, 1 row affected (0.00 sec)
+
+Query OK, 1 row affected (0.00 sec)
+
+Query OK, 1 row affected (0.00 sec)
+
+Query OK, 1 row affected (0.00 sec)
+
+Query OK, 1 row affected (0.00 sec)
+
+Query OK, 1 row affected (0.00 sec)
+
+Query OK, 1 row affected (0.00 sec)
+
+Query OK, 1 row affected (0.00 sec)
+
+Query OK, 1 row affected (0.00 sec)
+
+Query OK, 1 row affected (0.00 sec)
+
+Query OK, 1 row affected (0.00 sec)
+
+Query OK, 1 row affected (0.00 sec)
+
+Query OK, 1 row affected (0.00 sec)
+
+Query OK, 1 row affected (0.00 sec)
+
+Query OK, 1 row affected (0.00 sec)
+
+Query OK, 1 row affected (0.00 sec)
+
+Query OK, 1 row affected (0.00 sec)
+
+Query OK, 1 row affected (0.00 sec)
+
+Query OK, 1 row affected (0.00 sec)
+
+Query OK, 1 row affected (0.00 sec)
+
+Query OK, 1 row affected (0.00 sec)
+
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert titles values ('PC8888', 'Secrets of Silicon Valley', 'popular_comp', '1389',20.00, 8000.00, 10, 4095,'Muckraking reporting on the world''s largest computer hardware and software manufacturers.','1994-06-12');insert titles values ('BU1032', 'The Busy Executive''s Database Guide', 'business','1389', 19.99, 5000.00, 10, 4095,'An overview of available database systems with emphasis on common business applications. Illustrated.','1991-06-12');insert titles values ('PS7777', 'Emotional Security: A New Algorithm', 'psychology','0736', 7.99, 4000.00, 10, 3336,'Protecting yourself and your loved ones from undue emotional stress in the modern world. Use of computer and nutritional aids emphasized.','1991-06-12');insert titles values ('PS3333', 'Prolonged Data Deprivation: Four Case Studies','psychology', '0736', 19.99, 2000.00, 10, 4072,'What happens when the data runs dry?  Searching evaluations of information-shortage effects.','1991-06-12');insert titles values ('BU1111', 'Cooking with Computers: Surreptitious Balance Sheets','business', '1389', 11.95, 5000.00, 10, 3876,'Helpful hints on how to use your electronic resources to the best advantage.','1991-06-09');insert titles values ('MC2222', 'Silicon Valley Gastronomic Treats', 'mod_cook', '0877',19.99, 0.00, 12, 2032,'Favorite recipes for quick, easy, and elegant meals.','1991-06-09');insert titles values ('TC7777', 'Sushi, Anyone?', 'trad_cook', '0877', 14.99, 8000.00,10, 4095,'Detailed instructions on how to make authentic Japanese sushi in your spare time.','1991-06-12');insert titles values ('TC4203', 'Fifty Years in Buckingham Palace Kitchens', 'trad_cook','0877', 11.95, 4000.00, 14, 15096,'More anecdotes from the Queen''s favorite cook describing life among English royalty. Recipes, techniques, tender vignettes.','1991-06-12');insert titles values ('PC1035', 'But Is It User Friendly?', 'popular_comp', '1389',22.95, 7000.00, 16, 8780,'A survey of software for the naive user, focusing on the ''friendliness'' of each.','1991-06-30');insert titles values('BU2075', 'You Can Combat Computer Stress!', 'business', '0736',2.99, 10125.00, 24, 18722,'The latest medical and psychological techniques for living with the electronic office. Easy-to-understand explanations.','1991-06-30');insert titles values('PS2091', 'Is Anger the Enemy?', 'psychology', '0736', 10.95,2275.00, 12, 2045,'Carefully researched study of the effects of strong emotions on the body. Metabolic charts included.','1991-06-15');insert titles values('PS2106', 'Life Without Fear', 'psychology', '0736', 7.00, 6000.00,10, 111,'New exercise, meditation, and nutritional techniques that can reduce the shock of daily interactions. Popular audience. Sample menus included, exercise video available separately.','1991-10-05');insert titles values('MC3021', 'The Gourmet Microwave', 'mod_cook', '0877', 2.99,15000.00, 24, 22246,'Traditional French gourmet recipes adapted for modern microwave cooking.','1991-06-18');insert titles values('TC3218', 'Onions, Leeks, and Garlic: Cooking Secrets of the Mediterranean','trad_cook', '0877', 20.95, 7000.00, 10, 375,'Profusely illustrated in color, this makes a wonderful gift book for a cuisine-oriented friend.','1991-10-21');insert titles (title_id, title, pub_id) values('MC3026','The Psychology of Computer Cooking', '0877');insert titles values ('BU7832', 'Straight Talk About Computers', 'business', '1389',19.99, 5000.00, 10, 4095,'Annotated analysis of what computers can do for you: a no-hype guide for the critical user.','1991-06-22');insert titles values('PS1372', 'Computer Phobic AND Non-Phobic Individuals: Behavior Variations','psychology', '0877', 21.59, 7000.00, 10, 375,'A must for the specialist, this book examines the difference between those who hate and fear computers and those who don''t.','1991-10-21');insert titles (title_id, title, type, pub_id, notes) values('PC9999', 'Net Etiquette','popular_comp', '1389', 'A must-read for computer conferencing.');
+Query OK, 1 row affected (0.01 sec)
+
+Query OK, 1 row affected (0.00 sec)
+
+Query OK, 1 row affected (0.00 sec)
+
+Query OK, 1 row affected (0.00 sec)
+
+Query OK, 1 row affected (0.00 sec)
+
+Query OK, 1 row affected (0.00 sec)
+
+Query OK, 1 row affected (0.00 sec)
+
+Query OK, 1 row affected (0.00 sec)
+
+Query OK, 1 row affected (0.00 sec)
+
+Query OK, 1 row affected (0.00 sec)
+
+Query OK, 1 row affected (0.00 sec)
+
+Query OK, 1 row affected (0.00 sec)
+
+Query OK, 1 row affected (0.00 sec)
+
+Query OK, 1 row affected (0.00 sec)
+
+Query OK, 1 row affected (0.00 sec)
+
+Query OK, 1 row affected (0.00 sec)
+
+Query OK, 1 row affected (0.00 sec)
+
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert titleauthor values('409-56-7008', 'BU1032', 1, 60);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert titleauthor values('486-29-1786', 'PS7777', 1, 100);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert titleauthor values('486-29-1786', 'PC9999', 1, 100);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert titleauthor values('712-45-1867', 'MC2222', 1, 100);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert titleauthor values('172-32-1176', 'PS3333', 1, 100);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert titleauthor values('213-46-8915', 'BU1032', 2, 40);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert titleauthor values('213-46-8915', 'BU2075', 1, 100);insert titleauthor values('998-72-3567', 'PS2091', 1, 50);insert titleauthor values('899-46-2035', 'PS2091', 2, 50);insert titleauthor values('998-72-3567', 'PS2106', 1, 100);insert titleauthor values('722-51-5454', 'MC3021', 1, 75);
+Query OK, 1 row affected (0.01 sec)
+
+Query OK, 1 row affected (0.00 sec)
+
+Query OK, 1 row affected (0.00 sec)
+
+Query OK, 1 row affected (0.00 sec)
+
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert titleauthor values('899-46-2035', 'MC3021', 2, 25);insert titleauthor values('807-91-6654', 'TC3218', 1, 100);insert titleauthor values('274-80-9391', 'BU7831', 1, 100);insert titleauthor values('427-17-2319', 'PC8888', 1, 50);insert titleauthor values('722-51-5454', 'PC8888', 2, 50);insert titleauthor values('756-30-7391', 'PS1372', 2, 75);insert titleauthor values('724-80-9391', 'PS1372', 1, 25);insert titleauthor values('724-80-9391', 'BU1111', 1, 60);insert titleauthor values('267-41-2394', 'BU1111', 1, 40);insert titleauthor values('672-41-2394', 'TC7777', 1, 40);insert titleauthor values('267-41-2394', 'TC7777', 2, 30);insert titleauthor values('472-27-2349', 'TC7777', 3, 30);insert titleauthor values('648-92-1872', 'TC4203', 1, 100);
+Query OK, 1 row affected (0.01 sec)
+
+Query OK, 1 row affected (0.00 sec)
+
+ERROR 1452 (23000): Cannot add or update a child row: a foreign key constraint fails (`pubs`.`titleauthor`, CONSTRAINT `titleid_fk` FOREIGN KEY (`title_id`) REFERENCES `titles` (`title_id`))
+Query OK, 1 row affected (0.00 sec)
+
+Query OK, 1 row affected (0.00 sec)
+
+Query OK, 1 row affected (0.00 sec)
+
+Query OK, 1 row affected (0.00 sec)
+
+Query OK, 1 row affected (0.00 sec)
+
+Query OK, 1 row affected (0.00 sec)
+
+ERROR 1452 (23000): Cannot add or update a child row: a foreign key constraint fails (`pubs`.`titleauthor`, CONSTRAINT `auid_fk` FOREIGN KEY (`au_id`) REFERENCES `authors` (`au_id`))
+Query OK, 1 row affected (0.00 sec)
+
+Query OK, 1 row affected (0.00 sec)
+
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert titleauthor values('238-95-7766', 'PC1035', 2, 100);
+ERROR 2013 (HY000): Lost connection to MySQL server during query
+No connection. Trying to reconnect...
+Connection id:    26
+Current database: pubs
+
+Query OK, 1 row affected (0.03 sec)
+
+mysql> SELECT pub_id FROM publishers
+    -> ;
++--------+
+| pub_id |
++--------+
+| 0736   |
+| 0877   |
+| 1389   |
+| 1622   |
+| 1756   |
+| 9901   |
+| 9952   |
+| 9999   |
++--------+
+8 rows in set (0.01 sec)
+
+mysql> SELECT * FROM publishers
+    -> ;
++--------+-----------------------+------------+-------+---------+
+| pub_id | pub_name              | city       | state | country |
++--------+-----------------------+------------+-------+---------+
+| 0736   | New Moon Books        | Boston     | MA    | USA     |
+| 0877   | Binnet & Harley       | Washington | DC    | USA     |
+| 1389   | Algodata Infosystems  | Berkeley   | DC    | USA     |
+| 1622   | Five Lakes Publishing | Chicago    | IL    | USA     |
+| 1756   | Ramona Publishers     | Dallas     | TX    | USA     |
+| 9901   | GGG&G                 | Munchen    | NULL  | Germany |
+| 9952   | Scootney Books        | Ner York   | NY    | USA     |
+| 9999   | Lucerne Publishing    | Paris      | NULL  | France  |
++--------+-----------------------+------------+-------+---------+
+8 rows in set (0.00 sec)
+
+mysql> SELECT DISTINCT country FROM publishers;
++---------+
+| country |
++---------+
+| USA     |
+| Germany |
+| France  |
++---------+
+3 rows in set (0.01 sec)
+
+mysql> SELECT pub_id "Publishers Identity", pub_name "Publishers Name"
+    -> FROM publishers;
++---------------------+-----------------------+
+| Publishers Identity | Publishers Name       |
++---------------------+-----------------------+
+| 0736                | New Moon Books        |
+| 0877                | Binnet & Harley       |
+| 1389                | Algodata Infosystems  |
+| 1622                | Five Lakes Publishing |
+| 1756                | Ramona Publishers     |
+| 9901                | GGG&G                 |
+| 9952                | Scootney Books        |
+| 9999                | Lucerne Publishing    |
++---------------------+-----------------------+
+8 rows in set (0.00 sec)
+
+mysql> SELECT CONCAT(pub_id, ' Publisher Name is :', pub_name) "ID and Name"
+    -> FROM publishers;
++----------------------------------------------+
+| ID and Name                                  |
++----------------------------------------------+
+| 0736 Publisher Name is :New Moon Books        |
+| 0877 Publisher Name is :Binnet & Harley       |
+| 1389 Publisher Name is :Algodata Infosystems  |
+| 1622 Publisher Name is :Five Lakes Publishing |
+| 1756 Publisher Name is :Ramona Publishers     |
+| 9901 Publisher Name is :GGG&G                 |
+| 9952 Publisher Name is :Scootney Books        |
+| 9999 Publisher Name is :Lucerne Publishing    |
++----------------------------------------------+
+8 rows in set (0.00 sec)
+
+mysql> SELECT title_id, title, price FROM titles
+    -> ;
++----------+-----------------------------------------------------------------+---------+
+| title_id | title                                                           | price   |
++----------+-----------------------------------------------------------------+---------+
+| BU1032   | The Busy Executive's Database Guide                             | 19.9900 |
+| BU1111   | Cooking with Computers: Surreptitious Balance Sheets            | 11.9500 |
+| BU2075   | You Can Combat Computer Stress!                                 |  2.9900 |
+| BU7832   | Straight Talk About Computers                                   | 19.9900 |
+| MC2222   | Silicon Valley Gastronomic Treats                               | 19.9900 |
+| MC3021   | The Gourmet Microwave                                           |  2.9900 |
+| MC3026   | The Psychology of Computer Cooking                              |    NULL |
+| PC1035   | But Is It User Friendly?                                        | 22.9500 |
+| PC8888   | Secrets of Silicon Valley                                       | 20.0000 |
+| PC9999   | Net Etiquette                                                   |    NULL |
+| PS1372   | Computer Phobic AND Non-Phobic Individuals: Behavior Variations | 21.5900 |
+| PS2091   | Is Anger the Enemy?                                             | 10.9500 |
+| PS2106   | Life Without Fear                                               |  7.0000 |
+| PS3333   | Prolonged Data Deprivation: Four Case Studies                   | 19.9900 |
+| PS7777   | Emotional Security: A New Algorithm                             |  7.9900 |
+| TC3218   | Onions, Leeks, and Garlic: Cooking Secrets of the Mediterranean | 20.9500 |
+| TC4203   | Fifty Years in Buckingham Palace Kitchens                       | 11.9500 |
+| TC7777   | Sushi, Anyone?                                                  | 14.9900 |
++----------+-----------------------------------------------------------------+---------+
+18 rows in set (0.00 sec)
+
+mysql> SELECT title_id, price, price + 5, ttd_sales, ttd_sales * 5
+    -> FROM titles;
++----------+---------+-----------+-----------+---------------+
+| title_id | price   | price + 5 | ttd_sales | ttd_sales * 5 |
++----------+---------+-----------+-----------+---------------+
+| BU1032   | 19.9900 |   24.9900 |      4095 |         20475 |
+| BU1111   | 11.9500 |   16.9500 |      3876 |         19380 |
+| BU2075   |  2.9900 |    7.9900 |     18722 |         93610 |
+| BU7832   | 19.9900 |   24.9900 |      4095 |         20475 |
+| MC2222   | 19.9900 |   24.9900 |      2032 |         10160 |
+| MC3021   |  2.9900 |    7.9900 |     22246 |        111230 |
+| MC3026   |    NULL |      NULL |      NULL |          NULL |
+| PC1035   | 22.9500 |   27.9500 |      8780 |         43900 |
+| PC8888   | 20.0000 |   25.0000 |      4095 |         20475 |
+| PC9999   |    NULL |      NULL |      NULL |          NULL |
+| PS1372   | 21.5900 |   26.5900 |       375 |          1875 |
+| PS2091   | 10.9500 |   15.9500 |      2045 |         10225 |
+| PS2106   |  7.0000 |   12.0000 |       111 |           555 |
+| PS3333   | 19.9900 |   24.9900 |      4072 |         20360 |
+| PS7777   |  7.9900 |   12.9900 |      3336 |         16680 |
+| TC3218   | 20.9500 |   25.9500 |       375 |          1875 |
+| TC4203   | 11.9500 |   16.9500 |     15096 |         75480 |
+| TC7777   | 14.9900 |   19.9900 |      4095 |         20475 |
++----------+---------+-----------+-----------+---------------+
+18 rows in set (0.00 sec)
+
+mysql> SELECT title_id, price, price + 5 "Revised Price", ttd_sales, ttd_sales * 5 "Forecasted Sales"
+    -> FROM titles;
++----------+---------+---------------+-----------+------------------+
+| title_id | price   | Revised Price | ttd_sales | Forecasted Sales |
++----------+---------+---------------+-----------+------------------+
+| BU1032   | 19.9900 |       24.9900 |      4095 |            20475 |
+| BU1111   | 11.9500 |       16.9500 |      3876 |            19380 |
+| BU2075   |  2.9900 |        7.9900 |     18722 |            93610 |
+| BU7832   | 19.9900 |       24.9900 |      4095 |            20475 |
+| MC2222   | 19.9900 |       24.9900 |      2032 |            10160 |
+| MC3021   |  2.9900 |        7.9900 |     22246 |           111230 |
+| MC3026   |    NULL |          NULL |      NULL |             NULL |
+| PC1035   | 22.9500 |       27.9500 |      8780 |            43900 |
+| PC8888   | 20.0000 |       25.0000 |      4095 |            20475 |
+| PC9999   |    NULL |          NULL |      NULL |             NULL |
+| PS1372   | 21.5900 |       26.5900 |       375 |             1875 |
+| PS2091   | 10.9500 |       15.9500 |      2045 |            10225 |
+| PS2106   |  7.0000 |       12.0000 |       111 |              555 |
+| PS3333   | 19.9900 |       24.9900 |      4072 |            20360 |
+| PS7777   |  7.9900 |       12.9900 |      3336 |            16680 |
+| TC3218   | 20.9500 |       25.9500 |       375 |             1875 |
+| TC4203   | 11.9500 |       16.9500 |     15096 |            75480 |
+| TC7777   | 14.9900 |       19.9900 |      4095 |            20475 |
++----------+---------+---------------+-----------+------------------+
+18 rows in set (0.00 sec)
+
+mysql> SELECT * FROM publishers
+    -> WHERE state = 'MA';
++--------+----------------+--------+-------+---------+
+| pub_id | pub_name       | city   | state | country |
++--------+----------------+--------+-------+---------+
+| 0736   | New Moon Books | Boston | MA    | USA     |
++--------+----------------+--------+-------+---------+
+1 row in set (0.00 sec)
+
+mysql> SELECT * FROM publishers
+    -> WHERE country = 'USA';
++--------+-----------------------+------------+-------+---------+
+| pub_id | pub_name              | city       | state | country |
++--------+-----------------------+------------+-------+---------+
+| 0736   | New Moon Books        | Boston     | MA    | USA     |
+| 0877   | Binnet & Harley       | Washington | DC    | USA     |
+| 1389   | Algodata Infosystems  | Berkeley   | DC    | USA     |
+| 1622   | Five Lakes Publishing | Chicago    | IL    | USA     |
+| 1756   | Ramona Publishers     | Dallas     | TX    | USA     |
+| 9952   | Scootney Books        | Ner York   | NY    | USA     |
++--------+-----------------------+------------+-------+---------+
+6 rows in set (0.00 sec)
+
+mysql> SELECT title, price FROM titles
+    -> WHERE price >= 20;
++-----------------------------------------------------------------+---------+
+| title                                                           | price   |
++-----------------------------------------------------------------+---------+
+| But Is It User Friendly?                                        | 22.9500 |
+| Secrets of Silicon Valley                                       | 20.0000 |
+| Computer Phobic AND Non-Phobic Individuals: Behavior Variations | 21.5900 |
+| Onions, Leeks, and Garlic: Cooking Secrets of the Mediterranean | 20.9500 |
++-----------------------------------------------------------------+---------+
+4 rows in set (0.00 sec)
+
+mysql> SELECT title, pubdate from publishers
+    -> WHERE pubdate = '1991-06-12';
+ERROR 1054 (42S22): Unknown column 'title' in 'field list'
+mysql> SELECT title, pubdate from titles
+    -> WHERE pubdate = '1991-06-12';
++-----------------------------------------------+------------+
+| title                                         | pubdate    |
++-----------------------------------------------+------------+
+| The Busy Executive's Database Guide           | 1991-06-12 |
+| Prolonged Data Deprivation: Four Case Studies | 1991-06-12 |
+| Emotional Security: A New Algorithm           | 1991-06-12 |
+| Fifty Years in Buckingham Palace Kitchens     | 1991-06-12 |
+| Sushi, Anyone?                                | 1991-06-12 |
++-----------------------------------------------+------------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT title from titles
+    -> WHERE type = 'Psychology';
++-----------------------------------------------------------------+
+| title                                                           |
++-----------------------------------------------------------------+
+| Computer Phobic AND Non-Phobic Individuals: Behavior Variations |
+| Is Anger the Enemy?                                             |
+| Life Without Fear                                               |
+| Prolonged Data Deprivation: Four Case Studies                   |
+| Emotional Security: A New Algorithm                             |
++-----------------------------------------------------------------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT titles from titles
+    -> WHERE advance BETWEEN 2000 AND 5000;
+ERROR 1054 (42S22): Unknown column 'titles' in 'field list'
+mysql> SELECT title from titles
+    -> WHERE advance BETWEEN 2000 AND 5000;
++------------------------------------------------------+
+| title                                                |
++------------------------------------------------------+
+| The Busy Executive's Database Guide                  |
+| Cooking with Computers: Surreptitious Balance Sheets |
+| Straight Talk About Computers                        |
+| Is Anger the Enemy?                                  |
+| Prolonged Data Deprivation: Four Case Studies        |
+| Emotional Security: A New Algorithm                  |
+| Fifty Years in Buckingham Palace Kitchens            |
++------------------------------------------------------+
+7 rows in set (0.00 sec)
+
+mysql> SELECT title from titles
+    -> WHERE advance NOT BETWEEN 2000 AND 5000;
++-----------------------------------------------------------------+
+| title                                                           |
++-----------------------------------------------------------------+
+| You Can Combat Computer Stress!                                 |
+| Silicon Valley Gastronomic Treats                               |
+| The Gourmet Microwave                                           |
+| But Is It User Friendly?                                        |
+| Secrets of Silicon Valley                                       |
+| Computer Phobic AND Non-Phobic Individuals: Behavior Variations |
+| Life Without Fear                                               |
+| Onions, Leeks, and Garlic: Cooking Secrets of the Mediterranean |
+| Sushi, Anyone?                                                  |
++-----------------------------------------------------------------+
+9 rows in set (0.00 sec)
+
+mysql> SELECT title from titles
+    -> WHERE advance NOT BETWEEN 4000 AND 5000;
++-----------------------------------------------------------------+
+| title                                                           |
++-----------------------------------------------------------------+
+| You Can Combat Computer Stress!                                 |
+| Silicon Valley Gastronomic Treats                               |
+| The Gourmet Microwave                                           |
+| But Is It User Friendly?                                        |
+| Secrets of Silicon Valley                                       |
+| Computer Phobic AND Non-Phobic Individuals: Behavior Variations |
+| Is Anger the Enemy?                                             |
+| Life Without Fear                                               |
+| Prolonged Data Deprivation: Four Case Studies                   |
+| Onions, Leeks, and Garlic: Cooking Secrets of the Mediterranean |
+| Sushi, Anyone?                                                  |
++-----------------------------------------------------------------+
+11 rows in set (0.00 sec)
+
+mysql> SELECT pub_name FROM publishers
+    -> WHERE state IN ('MA', 'DC');
++----------------------+
+| pub_name             |
++----------------------+
+| New Moon Books       |
+| Binnet & Harley      |
+| Algodata Infosystems |
++----------------------+
+3 rows in set (0.00 sec)
+
+mysql> SELECT pub_name FROM publishers
+    -> WHERE state NOT IN ('MA', 'DC');
++-----------------------+
+| pub_name              |
++-----------------------+
+| Five Lakes Publishing |
+| Ramona Publishers     |
+| Scootney Books        |
++-----------------------+
+3 rows in set (0.00 sec)
+
+mysql> SELECT pub_name FROM publishers
+    -> WHERE country IN ('Germany', 'France');
++--------------------+
+| pub_name           |
++--------------------+
+| GGG&G              |
+| Lucerne Publishing |
++--------------------+
+2 rows in set (0.00 sec)
+
+mysql> SELECT title FROM titles
+    -> WHERE ttd_sales IS NULL;
++------------------------------------+
+| title                              |
++------------------------------------+
+| The Psychology of Computer Cooking |
+| Net Etiquette                      |
++------------------------------------+
+2 rows in set (0.00 sec)
+
+mysql> SELECT title, price, type FROM titles
+    -> WHERE type IN ('Businesse', 'ModernCooking') AND price > 10;
+Empty set (0.00 sec)
+
+mysql> SELECT title, price, type FROM titles
+    -> WHERE type IN ('Business', 'Modern Cooking') AND price > 10;
++------------------------------------------------------+---------+----------+
+| title                                                | price   | type     |
++------------------------------------------------------+---------+----------+
+| The Busy Executive's Database Guide                  | 19.9900 | business |
+| Cooking with Computers: Surreptitious Balance Sheets | 11.9500 | business |
+| Straight Talk About Computers                        | 19.9900 | business |
++------------------------------------------------------+---------+----------+
+3 rows in set (0.00 sec)
+
+mysql> SELECT title, price, type FROM titles
+    -> WHERE type IN ('Business', 'mod_cook') AND price > 10;
++------------------------------------------------------+---------+----------+
+| title                                                | price   | type     |
++------------------------------------------------------+---------+----------+
+| The Busy Executive's Database Guide                  | 19.9900 | business |
+| Cooking with Computers: Surreptitious Balance Sheets | 11.9500 | business |
+| Straight Talk About Computers                        | 19.9900 | business |
+| Silicon Valley Gastronomic Treats                    | 19.9900 | mod_cook |
++------------------------------------------------------+---------+----------+
+4 rows in set (0.00 sec)
+
+mysql> SELECT title FROM title
+    -> WHERE type LIKE 'bus%';
+ERROR 1146 (42S02): Table 'pubs.title' doesn't exist
+mysql> SELECT title FROM titles
+    -> WHERE type LIKE 'bus%';
++------------------------------------------------------+
+| title                                                |
++------------------------------------------------------+
+| The Busy Executive's Database Guide                  |
+| Cooking with Computers: Surreptitious Balance Sheets |
+| You Can Combat Computer Stress!                      |
+| Straight Talk About Computers                        |
++------------------------------------------------------+
+4 rows in set (0.00 sec)
+
+mysql> SELECT * FROM publishers
+    -> WHERE country LIKE 'US_';
++--------+-----------------------+------------+-------+---------+
+| pub_id | pub_name              | city       | state | country |
++--------+-----------------------+------------+-------+---------+
+| 0736   | New Moon Books        | Boston     | MA    | USA     |
+| 0877   | Binnet & Harley       | Washington | DC    | USA     |
+| 1389   | Algodata Infosystems  | Berkeley   | DC    | USA     |
+| 1622   | Five Lakes Publishing | Chicago    | IL    | USA     |
+| 1756   | Ramona Publishers     | Dallas     | TX    | USA     |
+| 9952   | Scootney Books        | Ner York   | NY    | USA     |
++--------+-----------------------+------------+-------+---------+
+6 rows in set (0.00 sec)
+
+mysql> SELECT title, title_id FROM titles
+    -> WHERE title_id REGEXP '^P' OR title_id REGEXP '^M'; 
++-----------------------------------------------------------------+----------+
+| title                                                           | title_id |
++-----------------------------------------------------------------+----------+
+| Silicon Valley Gastronomic Treats                               | MC2222   |
+| The Gourmet Microwave                                           | MC3021   |
+| The Psychology of Computer Cooking                              | MC3026   |
+| But Is It User Friendly?                                        | PC1035   |
+| Secrets of Silicon Valley                                       | PC8888   |
+| Net Etiquette                                                   | PC9999   |
+| Computer Phobic AND Non-Phobic Individuals: Behavior Variations | PS1372   |
+| Is Anger the Enemy?                                             | PS2091   |
+| Life Without Fear                                               | PS2106   |
+| Prolonged Data Deprivation: Four Case Studies                   | PS3333   |
+| Emotional Security: A New Algorithm                             | PS7777   |
++-----------------------------------------------------------------+----------+
+11 rows in set (0.00 sec)
+
+mysql> SELECT title, title_id FROM titles
+    -> WHERE title_id REGEXP '^P'; 
++-----------------------------------------------------------------+----------+
+| title                                                           | title_id |
++-----------------------------------------------------------------+----------+
+| But Is It User Friendly?                                        | PC1035   |
+| Secrets of Silicon Valley                                       | PC8888   |
+| Net Etiquette                                                   | PC9999   |
+| Computer Phobic AND Non-Phobic Individuals: Behavior Variations | PS1372   |
+| Is Anger the Enemy?                                             | PS2091   |
+| Life Without Fear                                               | PS2106   |
+| Prolonged Data Deprivation: Four Case Studies                   | PS3333   |
+| Emotional Security: A New Algorithm                             | PS7777   |
++-----------------------------------------------------------------+----------+
+8 rows in set (0.00 sec)
+
+mysql> SELECT title, title_id FROM titles
+    -> WHERE title_id NOT REGEXP '^P' OR title_id NOT REGEXP '^M'; 
++-----------------------------------------------------------------+----------+
+| title                                                           | title_id |
++-----------------------------------------------------------------+----------+
+| The Busy Executive's Database Guide                             | BU1032   |
+| Cooking with Computers: Surreptitious Balance Sheets            | BU1111   |
+| You Can Combat Computer Stress!                                 | BU2075   |
+| Straight Talk About Computers                                   | BU7832   |
+| Silicon Valley Gastronomic Treats                               | MC2222   |
+| The Gourmet Microwave                                           | MC3021   |
+| The Psychology of Computer Cooking                              | MC3026   |
+| But Is It User Friendly?                                        | PC1035   |
+| Secrets of Silicon Valley                                       | PC8888   |
+| Net Etiquette                                                   | PC9999   |
+| Computer Phobic AND Non-Phobic Individuals: Behavior Variations | PS1372   |
+| Is Anger the Enemy?                                             | PS2091   |
+| Life Without Fear                                               | PS2106   |
+| Prolonged Data Deprivation: Four Case Studies                   | PS3333   |
+| Emotional Security: A New Algorithm                             | PS7777   |
+| Onions, Leeks, and Garlic: Cooking Secrets of the Mediterranean | TC3218   |
+| Fifty Years in Buckingham Palace Kitchens                       | TC4203   |
+| Sushi, Anyone?                                                  | TC7777   |
++-----------------------------------------------------------------+----------+
+18 rows in set (0.00 sec)
+
+mysql> SELECT title, title_id FROM titles
+    -> WHERE title_id NOT REGEXP '^P' AND title_id NOT REGEXP '^M'; 
++-----------------------------------------------------------------+----------+
+| title                                                           | title_id |
++-----------------------------------------------------------------+----------+
+| The Busy Executive's Database Guide                             | BU1032   |
+| Cooking with Computers: Surreptitious Balance Sheets            | BU1111   |
+| You Can Combat Computer Stress!                                 | BU2075   |
+| Straight Talk About Computers                                   | BU7832   |
+| Onions, Leeks, and Garlic: Cooking Secrets of the Mediterranean | TC3218   |
+| Fifty Years in Buckingham Palace Kitchens                       | TC4203   |
+| Sushi, Anyone?                                                  | TC7777   |
++-----------------------------------------------------------------+----------+
+7 rows in set (0.00 sec)
+
+mysql> SELECT title, title_id FROM titles
+    -> WHERE title_id LIKE '_C%';
++-----------------------------------------------------------------+----------+
+| title                                                           | title_id |
++-----------------------------------------------------------------+----------+
+| Silicon Valley Gastronomic Treats                               | MC2222   |
+| The Gourmet Microwave                                           | MC3021   |
+| The Psychology of Computer Cooking                              | MC3026   |
+| But Is It User Friendly?                                        | PC1035   |
+| Secrets of Silicon Valley                                       | PC8888   |
+| Net Etiquette                                                   | PC9999   |
+| Onions, Leeks, and Garlic: Cooking Secrets of the Mediterranean | TC3218   |
+| Fifty Years in Buckingham Palace Kitchens                       | TC4203   |
+| Sushi, Anyone?                                                  | TC7777   |
++-----------------------------------------------------------------+----------+
+9 rows in set (0.00 sec)
+
+mysql> SELECT title, title_id FROM titles
+    -> WHERE title_id REGEXP '^.C';
++-----------------------------------------------------------------+----------+
+| title                                                           | title_id |
++-----------------------------------------------------------------+----------+
+| Silicon Valley Gastronomic Treats                               | MC2222   |
+| The Gourmet Microwave                                           | MC3021   |
+| The Psychology of Computer Cooking                              | MC3026   |
+| But Is It User Friendly?                                        | PC1035   |
+| Secrets of Silicon Valley                                       | PC8888   |
+| Net Etiquette                                                   | PC9999   |
+| Onions, Leeks, and Garlic: Cooking Secrets of the Mediterranean | TC3218   |
+| Fifty Years in Buckingham Palace Kitchens                       | TC4203   |
+| Sushi, Anyone?                                                  | TC7777   |
++-----------------------------------------------------------------+----------+
+9 rows in set (0.00 sec)
+
+mysql> SELECT title, title_id FROM titles
+    -> WHERE title REGEXP '!$';
++---------------------------------+----------+
+| title                           | title_id |
++---------------------------------+----------+
+| You Can Combat Computer Stress! | BU2075   |
++---------------------------------+----------+
+1 row in set (0.00 sec)
+
+mysql> SELECT au_id, au_fname, au_lname FROM authors
+    -> WHERE au_id like '%-72-%';
++-------------+-------------+----------+
+| au_id       | au_fname    | au_lname |
++-------------+-------------+----------+
+| 527-72-3246 | Morningstar | Greene   |
+| 893-72-1158 | Heather     | McBadden |
+| 998-72-3567 | Albert      | Ringer   |
++-------------+-------------+----------+
+3 rows in set (0.00 sec)
+
+mysql> SELECT au_id, au_fname, au_lname FROM authors
+    -> WHERE au_id REGEXP '-[5-8].-';
++-------------+-------------+------------+
+| au_id       | au_fname    | au_lname   |
++-------------+-------------+------------+
+| 274-80-9391 | Dean        | Straight   |
+| 409-56-7008 | Abraham     | Bennet     |
+| 527-72-3246 | Morningstar | Greene     |
+| 672-71-3249 | Akiko       | Yokomoto   |
+| 722-51-5454 | Michel      | DeFrance   |
+| 724-80-9391 | Stearns     | MacFeather |
+| 893-72-1158 | Heather     | McBadden   |
+| 998-72-3567 | Albert      | Ringer     |
++-------------+-------------+------------+
+8 rows in set (0.00 sec)
+
+mysql> SELECT au_id, au_fname, address FROM authors
+    -> WHERE au_id REGEXP '-[08].-' AND address REGEXP 'AV.$';
++-------------+----------+--------------------+
+| au_id       | au_fname | address            |
++-------------+----------+--------------------+
+| 274-80-9391 | Dean     | 5420 College Av.   |
+| 724-08-9931 | Dirk     | 5420 Telegraph Av. |
++-------------+----------+--------------------+
+2 rows in set (0.00 sec)
+
+mysql> SELECT address, city, state FROM authors
+    -> WHERE city REGEXP '[aeiou]$';
++----------------------+---------------+-------+
+| address              | city          | state |
++----------------------+---------------+-------+
+| 22 Cleveland Av. #14 | San Jose      | CA    |
+| 10 Mississippi Dr.   | Lawrence      | KS    |
+| 3410 Blonde St.      | Palo Alto     | CA    |
+| PO Box 792           | Covelo        | CA    |
+| 18 Broadway Av.      | San Francisco | CA    |
+| 22 Graybar House Rd. | Nashville     | TN    |
+| 1956 Arlington Pl.   | Rockville     | MD    |
+| 3410 Blonde St.      | Palo Alto     | CA    |
+| 301 Putnam           | Vacaville     | CA    |
++----------------------+---------------+-------+
+9 rows in set (0.00 sec)
+
+mysql> SELECT address, city, state FROM authors
+    -> WHERE city REGEXP '[aeiou]$' AND state = 'CA' AND contract != 0;
++----------------------+---------------+-------+
+| address              | city          | state |
++----------------------+---------------+-------+
+| 22 Cleveland Av. #14 | San Jose      | CA    |
+| 3410 Blonde St.      | Palo Alto     | CA    |
+| PO Box 792           | Covelo        | CA    |
+| 18 Broadway Av.      | San Francisco | CA    |
+| 3410 Blonde St.      | Palo Alto     | CA    |
++----------------------+---------------+-------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT title, price FROM titles
+    -> ORDER BY price DESC;
++-----------------------------------------------------------------+---------+
+| title                                                           | price   |
++-----------------------------------------------------------------+---------+
+| But Is It User Friendly?                                        | 22.9500 |
+| Computer Phobic AND Non-Phobic Individuals: Behavior Variations | 21.5900 |
+| Onions, Leeks, and Garlic: Cooking Secrets of the Mediterranean | 20.9500 |
+| Secrets of Silicon Valley                                       | 20.0000 |
+| The Busy Executive's Database Guide                             | 19.9900 |
+| Straight Talk About Computers                                   | 19.9900 |
+| Silicon Valley Gastronomic Treats                               | 19.9900 |
+| Prolonged Data Deprivation: Four Case Studies                   | 19.9900 |
+| Sushi, Anyone?                                                  | 14.9900 |
+| Cooking with Computers: Surreptitious Balance Sheets            | 11.9500 |
+| Fifty Years in Buckingham Palace Kitchens                       | 11.9500 |
+| Is Anger the Enemy?                                             | 10.9500 |
+| Emotional Security: A New Algorithm                             |  7.9900 |
+| Life Without Fear                                               |  7.0000 |
+| You Can Combat Computer Stress!                                 |  2.9900 |
+| The Gourmet Microwave                                           |  2.9900 |
+| The Psychology of Computer Cooking                              |    NULL |
+| Net Etiquette                                                   |    NULL |
++-----------------------------------------------------------------+---------+
+18 rows in set (0.00 sec)
+
+mysql> SELECT title, pubdate FROM titles
+    -> ORDER BY pubdate;
++-----------------------------------------------------------------+------------+
+| title                                                           | pubdate    |
++-----------------------------------------------------------------+------------+
+| The Psychology of Computer Cooking                              | NULL       |
+| Net Etiquette                                                   | NULL       |
+| Cooking with Computers: Surreptitious Balance Sheets            | 1991-06-09 |
+| Silicon Valley Gastronomic Treats                               | 1991-06-09 |
+| The Busy Executive's Database Guide                             | 1991-06-12 |
+| Prolonged Data Deprivation: Four Case Studies                   | 1991-06-12 |
+| Emotional Security: A New Algorithm                             | 1991-06-12 |
+| Fifty Years in Buckingham Palace Kitchens                       | 1991-06-12 |
+| Sushi, Anyone?                                                  | 1991-06-12 |
+| Is Anger the Enemy?                                             | 1991-06-15 |
+| The Gourmet Microwave                                           | 1991-06-18 |
+| Straight Talk About Computers                                   | 1991-06-22 |
+| You Can Combat Computer Stress!                                 | 1991-06-30 |
+| But Is It User Friendly?                                        | 1991-06-30 |
+| Life Without Fear                                               | 1991-10-05 |
+| Computer Phobic AND Non-Phobic Individuals: Behavior Variations | 1991-10-21 |
+| Onions, Leeks, and Garlic: Cooking Secrets of the Mediterranean | 1991-10-21 |
+| Secrets of Silicon Valley                                       | 1994-06-12 |
++-----------------------------------------------------------------+------------+
+18 rows in set (0.00 sec)
+
+mysql>  SELECT title_id, price, 5*ttd_sales "Revised Sales" FROM titles
+    -> ORDER BY 5*ttd_sales;
++----------+---------+---------------+
+| title_id | price   | Revised Sales |
++----------+---------+---------------+
+| MC3026   |    NULL |          NULL |
+| PC9999   |    NULL |          NULL |
+| PS2106   |  7.0000 |           555 |
+| PS1372   | 21.5900 |          1875 |
+| TC3218   | 20.9500 |          1875 |
+| MC2222   | 19.9900 |         10160 |
+| PS2091   | 10.9500 |         10225 |
+| PS7777   |  7.9900 |         16680 |
+| BU1111   | 11.9500 |         19380 |
+| PS3333   | 19.9900 |         20360 |
+| BU1032   | 19.9900 |         20475 |
+| BU7832   | 19.9900 |         20475 |
+| PC8888   | 20.0000 |         20475 |
+| TC7777   | 14.9900 |         20475 |
+| PC1035   | 22.9500 |         43900 |
+| TC4203   | 11.9500 |         75480 |
+| BU2075   |  2.9900 |         93610 |
+| MC3021   |  2.9900 |        111230 |
++----------+---------+---------------+
+18 rows in set (0.00 sec)
+
+mysql>  SELECT title_id, price, 5*ttd_sales "Revised Sales" FROM titles
+    -> ORDER BY 3;
++----------+---------+---------------+
+| title_id | price   | Revised Sales |
++----------+---------+---------------+
+| MC3026   |    NULL |          NULL |
+| PC9999   |    NULL |          NULL |
+| PS2106   |  7.0000 |           555 |
+| PS1372   | 21.5900 |          1875 |
+| TC3218   | 20.9500 |          1875 |
+| MC2222   | 19.9900 |         10160 |
+| PS2091   | 10.9500 |         10225 |
+| PS7777   |  7.9900 |         16680 |
+| BU1111   | 11.9500 |         19380 |
+| PS3333   | 19.9900 |         20360 |
+| BU1032   | 19.9900 |         20475 |
+| BU7832   | 19.9900 |         20475 |
+| PC8888   | 20.0000 |         20475 |
+| TC7777   | 14.9900 |         20475 |
+| PC1035   | 22.9500 |         43900 |
+| TC4203   | 11.9500 |         75480 |
+| BU2075   |  2.9900 |         93610 |
+| MC3021   |  2.9900 |        111230 |
++----------+---------+---------------+
+18 rows in set (0.00 sec)
+
+mysql>  SELECT au_fname, city, state FROM authors
+    -> ORDER BY au_fname;
++-------------+----------------+-------+
+| au_fname    | city           | state |
++-------------+----------------+-------+
+| Abraham     | Berkeley       | CA    |
+| Akiko       | Walnut Creek   | CA    |
+| Albert      | Salt Lake City | UT    |
+| Ann         | Palo Alto      | CA    |
+| Anne        | Salt Lake City | UT    |
+| Burt        | Covelo         | CA    |
+| Charlene    | San Francisco  | CA    |
+| Cheryl      | Berkeley       | CA    |
+| Dean        | Oakland        | CA    |
+| Dirk        | Oakland        | CA    |
+| Heather     | Vacaville      | CA    |
+| Innes       | Ann Arbor      | MI    |
+| Johnson     | Menlo Park     | CA    |
+| Livia       | Oakland        | CA    |
+| Marjorie    | Oakland        | CA    |
+| Meander     | Lawrence       | KS    |
+| Michael     | San Jose       | CA    |
+| Michel      | Gary           | IN    |
+| Morningstar | Nashville      | TN    |
+| Reginald    | Corvallis      | OR    |
+| Sheryl      | Palo Alto      | CA    |
+| Stearns     | Oakland        | CA    |
+| Sylvia      | Rockville      | MD    |
++-------------+----------------+-------+
+23 rows in set (0.00 sec)
+
+mysql>  SELECT au_fname, city, state FROM authors
+    -> ORDER BY au_fname, city DESC;
++-------------+----------------+-------+
+| au_fname    | city           | state |
++-------------+----------------+-------+
+| Abraham     | Berkeley       | CA    |
+| Akiko       | Walnut Creek   | CA    |
+| Albert      | Salt Lake City | UT    |
+| Ann         | Palo Alto      | CA    |
+| Anne        | Salt Lake City | UT    |
+| Burt        | Covelo         | CA    |
+| Charlene    | San Francisco  | CA    |
+| Cheryl      | Berkeley       | CA    |
+| Dean        | Oakland        | CA    |
+| Dirk        | Oakland        | CA    |
+| Heather     | Vacaville      | CA    |
+| Innes       | Ann Arbor      | MI    |
+| Johnson     | Menlo Park     | CA    |
+| Livia       | Oakland        | CA    |
+| Marjorie    | Oakland        | CA    |
+| Meander     | Lawrence       | KS    |
+| Michael     | San Jose       | CA    |
+| Michel      | Gary           | IN    |
+| Morningstar | Nashville      | TN    |
+| Reginald    | Corvallis      | OR    |
+| Sheryl      | Palo Alto      | CA    |
+| Stearns     | Oakland        | CA    |
+| Sylvia      | Rockville      | MD    |
++-------------+----------------+-------+
+23 rows in set (0.00 sec)
+
+mysql>  SELECT pub_name, country FROM publishers
+    -> WHERE length(country) != 3;
++--------------------+---------+
+| pub_name           | country |
++--------------------+---------+
+| GGG&G              | Germany |
+| Lucerne Publishing | France  |
++--------------------+---------+
+2 rows in set (0.00 sec)
+
+mysql> SELECT ROUND(royalty, 2) FROM titles;
++-------------------+
+| ROUND(royalty, 2) |
++-------------------+
+|                10 |
+|                10 |
+|                24 |
+|                10 |
+|                12 |
+|                24 |
+|              NULL |
+|                16 |
+|                10 |
+|              NULL |
+|                10 |
+|                12 |
+|                10 |
+|                10 |
+|                10 |
+|                10 |
+|                14 |
+|                10 |
++-------------------+
+18 rows in set (0.00 sec)
+
+mysql>  SELECT pubdate FROM titles
+    -> WHERE monthname(pubdate) = 'June';
++------------+
+| pubdate    |
++------------+
+| 1991-06-12 |
+| 1991-06-09 |
+| 1991-06-30 |
+| 1991-06-22 |
+| 1991-06-09 |
+| 1991-06-18 |
+| 1991-06-30 |
+| 1994-06-12 |
+| 1991-06-15 |
+| 1991-06-12 |
+| 1991-06-12 |
+| 1991-06-12 |
+| 1991-06-12 |
++------------+
+13 rows in set (0.00 sec)
+
+mysql>  SELECT title FROM titles
+    -> WHERE monthname(pubdate) = 'June';
++------------------------------------------------------+
+| title                                                |
++------------------------------------------------------+
+| The Busy Executive's Database Guide                  |
+| Cooking with Computers: Surreptitious Balance Sheets |
+| You Can Combat Computer Stress!                      |
+| Straight Talk About Computers                        |
+| Silicon Valley Gastronomic Treats                    |
+| The Gourmet Microwave                                |
+| But Is It User Friendly?                             |
+| Secrets of Silicon Valley                            |
+| Is Anger the Enemy?                                  |
+| Prolonged Data Deprivation: Four Case Studies        |
+| Emotional Security: A New Algorithm                  |
+| Fifty Years in Buckingham Palace Kitchens            |
+| Sushi, Anyone?                                       |
++------------------------------------------------------+
+13 rows in set (0.00 sec)
+
+mysql>  SELECT title FROM titles
+    -> WHERE monthname(pubdate) = 'June' AND year(pubdate) = 1991;
++------------------------------------------------------+
+| title                                                |
++------------------------------------------------------+
+| The Busy Executive's Database Guide                  |
+| Cooking with Computers: Surreptitious Balance Sheets |
+| You Can Combat Computer Stress!                      |
+| Straight Talk About Computers                        |
+| Silicon Valley Gastronomic Treats                    |
+| The Gourmet Microwave                                |
+| But Is It User Friendly?                             |
+| Is Anger the Enemy?                                  |
+| Prolonged Data Deprivation: Four Case Studies        |
+| Emotional Security: A New Algorithm                  |
+| Fifty Years in Buckingham Palace Kitchens            |
+| Sushi, Anyone?                                       |
++------------------------------------------------------+
+12 rows in set (0.00 sec)
+
+mysql>  SELECT title FROM titles
+    -> WHERE monthname(pubdate) = 'June' AND dayname(pubdate) = 'Sunday';
++------------------------------------------------------+
+| title                                                |
++------------------------------------------------------+
+| Cooking with Computers: Surreptitious Balance Sheets |
+| You Can Combat Computer Stress!                      |
+| Silicon Valley Gastronomic Treats                    |
+| But Is It User Friendly?                             |
+| Secrets of Silicon Valley                            |
++------------------------------------------------------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT title, pubdate, dayname(pubdate) "day" 
+    -> FROM titles;
++-----------------------------------------------------------------+------------+-----------+
+| title                                                           | pubdate    | day       |
++-----------------------------------------------------------------+------------+-----------+
+| The Busy Executive's Database Guide                             | 1991-06-12 | Wednesday |
+| Cooking with Computers: Surreptitious Balance Sheets            | 1991-06-09 | Sunday    |
+| You Can Combat Computer Stress!                                 | 1991-06-30 | Sunday    |
+| Straight Talk About Computers                                   | 1991-06-22 | Saturday  |
+| Silicon Valley Gastronomic Treats                               | 1991-06-09 | Sunday    |
+| The Gourmet Microwave                                           | 1991-06-18 | Tuesday   |
+| The Psychology of Computer Cooking                              | NULL       | NULL      |
+| But Is It User Friendly?                                        | 1991-06-30 | Sunday    |
+| Secrets of Silicon Valley                                       | 1994-06-12 | Sunday    |
+| Net Etiquette                                                   | NULL       | NULL      |
+| Computer Phobic AND Non-Phobic Individuals: Behavior Variations | 1991-10-21 | Monday    |
+| Is Anger the Enemy?                                             | 1991-06-15 | Saturday  |
+| Life Without Fear                                               | 1991-10-05 | Saturday  |
+| Prolonged Data Deprivation: Four Case Studies                   | 1991-06-12 | Wednesday |
+| Emotional Security: A New Algorithm                             | 1991-06-12 | Wednesday |
+| Onions, Leeks, and Garlic: Cooking Secrets of the Mediterranean | 1991-10-21 | Monday    |
+| Fifty Years in Buckingham Palace Kitchens                       | 1991-06-12 | Wednesday |
+| Sushi, Anyone?                                                  | 1991-06-12 | Wednesday |
++-----------------------------------------------------------------+------------+-----------+
+18 rows in set (0.00 sec)
+
+mysql> SELECT title, pubdate,
+    -> CASE dayofweek(pubdate)
+    -> WHEN 1 THEN 'Sunday'
+    -> WHEN 2 THEN 'Monday'
+    -> WHEN 3 THEN 'Tuesday'
+    -> WHEN 4 THEN 'Wednesday'
+    -> WHEN 5 THEN 'Thursday'
+    -> WHEN 6 THEN 'Friday'
+    -> WHEN 7 THEN 'Saturday'
+    -> END "day"
+    -> FROM titles;
++-----------------------------------------------------------------+------------+-----------+
+| title                                                           | pubdate    | day       |
++-----------------------------------------------------------------+------------+-----------+
+| The Busy Executive's Database Guide                             | 1991-06-12 | Wednesday |
+| Cooking with Computers: Surreptitious Balance Sheets            | 1991-06-09 | Sunday    |
+| You Can Combat Computer Stress!                                 | 1991-06-30 | Sunday    |
+| Straight Talk About Computers                                   | 1991-06-22 | Saturday  |
+| Silicon Valley Gastronomic Treats                               | 1991-06-09 | Sunday    |
+| The Gourmet Microwave                                           | 1991-06-18 | Tuesday   |
+| The Psychology of Computer Cooking                              | NULL       | NULL      |
+| But Is It User Friendly?                                        | 1991-06-30 | Sunday    |
+| Secrets of Silicon Valley                                       | 1994-06-12 | Sunday    |
+| Net Etiquette                                                   | NULL       | NULL      |
+| Computer Phobic AND Non-Phobic Individuals: Behavior Variations | 1991-10-21 | Monday    |
+| Is Anger the Enemy?                                             | 1991-06-15 | Saturday  |
+| Life Without Fear                                               | 1991-10-05 | Saturday  |
+| Prolonged Data Deprivation: Four Case Studies                   | 1991-06-12 | Wednesday |
+| Emotional Security: A New Algorithm                             | 1991-06-12 | Wednesday |
+| Onions, Leeks, and Garlic: Cooking Secrets of the Mediterranean | 1991-10-21 | Monday    |
+| Fifty Years in Buckingham Palace Kitchens                       | 1991-06-12 | Wednesday |
+| Sushi, Anyone?                                                  | 1991-06-12 | Wednesday |
++-----------------------------------------------------------------+------------+-----------+
+18 rows in set (0.00 sec)
+
+mysql> SELECT title, pubdate  from titles
+    -> WHERE (year(curdate()) - year(pubdate)) <= 15;
+Empty set (0.00 sec)
+
+mysql> SELECT title, pubdate, ADDDATE(pubdate, INTERVAL 30 MONTH) FROM titles;
++-----------------------------------------------------------------+------------+-------------------------------------+
+| title                                                           | pubdate    | ADDDATE(pubdate, INTERVAL 30 MONTH) |
++-----------------------------------------------------------------+------------+-------------------------------------+
+| The Busy Executive's Database Guide                             | 1991-06-12 | 1993-12-12                          |
+| Cooking with Computers: Surreptitious Balance Sheets            | 1991-06-09 | 1993-12-09                          |
+| You Can Combat Computer Stress!                                 | 1991-06-30 | 1993-12-30                          |
+| Straight Talk About Computers                                   | 1991-06-22 | 1993-12-22                          |
+| Silicon Valley Gastronomic Treats                               | 1991-06-09 | 1993-12-09                          |
+| The Gourmet Microwave                                           | 1991-06-18 | 1993-12-18                          |
+| The Psychology of Computer Cooking                              | NULL       | NULL                                |
+| But Is It User Friendly?                                        | 1991-06-30 | 1993-12-30                          |
+| Secrets of Silicon Valley                                       | 1994-06-12 | 1996-12-12                          |
+| Net Etiquette                                                   | NULL       | NULL                                |
+| Computer Phobic AND Non-Phobic Individuals: Behavior Variations | 1991-10-21 | 1994-04-21                          |
+| Is Anger the Enemy?                                             | 1991-06-15 | 1993-12-15                          |
+| Life Without Fear                                               | 1991-10-05 | 1994-04-05                          |
+| Prolonged Data Deprivation: Four Case Studies                   | 1991-06-12 | 1993-12-12                          |
+| Emotional Security: A New Algorithm                             | 1991-06-12 | 1993-12-12                          |
+| Onions, Leeks, and Garlic: Cooking Secrets of the Mediterranean | 1991-10-21 | 1994-04-21                          |
+| Fifty Years in Buckingham Palace Kitchens                       | 1991-06-12 | 1993-12-12                          |
+| Sushi, Anyone?                                                  | 1991-06-12 | 1993-12-12                          |
++-----------------------------------------------------------------+------------+-------------------------------------+
+18 rows in set (0.00 sec)
+
+mysql> SELECT title, pubdate from titles
+    -> WHERE pubdate IS NULL;
++------------------------------------+---------+
+| title                              | pubdate |
++------------------------------------+---------+
+| The Psychology of Computer Cooking | NULL    |
+| Net Etiquette                      | NULL    |
++------------------------------------+---------+
+2 rows in set (0.00 sec)
+
+mysql> SELECT title, price, price + 2 "new price" from titles;
++-----------------------------------------------------------------+---------+-----------+
+| title                                                           | price   | new price |
++-----------------------------------------------------------------+---------+-----------+
+| The Busy Executive's Database Guide                             | 19.9900 |   21.9900 |
+| Cooking with Computers: Surreptitious Balance Sheets            | 11.9500 |   13.9500 |
+| You Can Combat Computer Stress!                                 |  2.9900 |    4.9900 |
+| Straight Talk About Computers                                   | 19.9900 |   21.9900 |
+| Silicon Valley Gastronomic Treats                               | 19.9900 |   21.9900 |
+| The Gourmet Microwave                                           |  2.9900 |    4.9900 |
+| The Psychology of Computer Cooking                              |    NULL |      NULL |
+| But Is It User Friendly?                                        | 22.9500 |   24.9500 |
+| Secrets of Silicon Valley                                       | 20.0000 |   22.0000 |
+| Net Etiquette                                                   |    NULL |      NULL |
+| Computer Phobic AND Non-Phobic Individuals: Behavior Variations | 21.5900 |   23.5900 |
+| Is Anger the Enemy?                                             | 10.9500 |   12.9500 |
+| Life Without Fear                                               |  7.0000 |    9.0000 |
+| Prolonged Data Deprivation: Four Case Studies                   | 19.9900 |   21.9900 |
+| Emotional Security: A New Algorithm                             |  7.9900 |    9.9900 |
+| Onions, Leeks, and Garlic: Cooking Secrets of the Mediterranean | 20.9500 |   22.9500 |
+| Fifty Years in Buckingham Palace Kitchens                       | 11.9500 |   13.9500 |
+| Sushi, Anyone?                                                  | 14.9900 |   16.9900 |
++-----------------------------------------------------------------+---------+-----------+
+18 rows in set (0.00 sec)
+
+mysql> SELECT title, price, IFNULL(price, 0) + 2 "new price" from titles;
++-----------------------------------------------------------------+---------+-----------+
+| title                                                           | price   | new price |
++-----------------------------------------------------------------+---------+-----------+
+| The Busy Executive's Database Guide                             | 19.9900 |   21.9900 |
+| Cooking with Computers: Surreptitious Balance Sheets            | 11.9500 |   13.9500 |
+| You Can Combat Computer Stress!                                 |  2.9900 |    4.9900 |
+| Straight Talk About Computers                                   | 19.9900 |   21.9900 |
+| Silicon Valley Gastronomic Treats                               | 19.9900 |   21.9900 |
+| The Gourmet Microwave                                           |  2.9900 |    4.9900 |
+| The Psychology of Computer Cooking                              |    NULL |    2.0000 |
+| But Is It User Friendly?                                        | 22.9500 |   24.9500 |
+| Secrets of Silicon Valley                                       | 20.0000 |   22.0000 |
+| Net Etiquette                                                   |    NULL |    2.0000 |
+| Computer Phobic AND Non-Phobic Individuals: Behavior Variations | 21.5900 |   23.5900 |
+| Is Anger the Enemy?                                             | 10.9500 |   12.9500 |
+| Life Without Fear                                               |  7.0000 |    9.0000 |
+| Prolonged Data Deprivation: Four Case Studies                   | 19.9900 |   21.9900 |
+| Emotional Security: A New Algorithm                             |  7.9900 |    9.9900 |
+| Onions, Leeks, and Garlic: Cooking Secrets of the Mediterranean | 20.9500 |   22.9500 |
+| Fifty Years in Buckingham Palace Kitchens                       | 11.9500 |   13.9500 |
+| Sushi, Anyone?                                                  | 14.9900 |   16.9900 |
++-----------------------------------------------------------------+---------+-----------+
+18 rows in set (0.00 sec)
+
+mysql> SELECT title_id,
+    -> CASE substr(title_id, 1, 2)
+    -> WHEN 'BU' THEN 'Business'
+    -> WHEN 'MC' THEN 'Modern Cooking'
+    -> WHEN 'PC' THEN 'Popular Computers'
+    -> WHEN 'PS' THEN 'Psychology'
+    -> WHEN 'TC' THEN 'Traditional Cooking'
+    -> END "type"
+    -> FROM titles;
++----------+---------------------+
+| title_id | type                |
++----------+---------------------+
+| BU2075   | Business            |
+| PS2091   | Psychology          |
+| PS2106   | Psychology          |
+| PS3333   | Psychology          |
+| PS7777   | Psychology          |
+| MC2222   | Modern Cooking      |
+| MC3021   | Modern Cooking      |
+| MC3026   | Modern Cooking      |
+| PS1372   | Psychology          |
+| TC3218   | Traditional Cooking |
+| TC4203   | Traditional Cooking |
+| TC7777   | Traditional Cooking |
+| BU1032   | Business            |
+| BU1111   | Business            |
+| BU7832   | Business            |
+| PC1035   | Popular Computers   |
+| PC8888   | Popular Computers   |
+| PC9999   | Popular Computers   |
++----------+---------------------+
+18 rows in set (0.00 sec)
+
+mysql> \t
