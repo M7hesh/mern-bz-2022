@@ -1,0 +1,252 @@
+1. C:\Program Files\MongoDB\Server\6.0\bin\mongodb-database-tools-windows-x86_64-100.6.0\bin>mongoimport --db blazeclan --collection depts --drop --file D:\DEPT.json
+2022-09-04T20:42:21.007+0530    connected to: mongodb://localhost/
+2022-09-04T20:42:21.010+0530    dropping: blazeclan.dept
+2022-09-04T20:42:21.039+0530    4 document(s) imported successfully. 0 document(s) failed to import.
+
+C:\Program Files\MongoDB\Server\6.0\bin\mongodb-database-tools-windows-x86_64-100.6.0\bin>mongoimport --db blazeclan --collection emps --drop --file D:\EMP.json
+2022-09-04T20:42:58.586+0530    connected to: mongodb://localhost/
+2022-09-04T20:42:58.594+0530    dropping: blazeclan.emp
+2022-09-04T20:42:58.649+0530    14 document(s) imported successfully. 0 document(s) failed to import.
+
+2. blazeclan> db.depts.countDocuments()
+	4
+   blazeclan> db.depts.deleteOne({deptName: 'Operations'})
+{ acknowledged: true, deletedCount: 1 }
+   blazeclan> db.depts.countDocuments()
+	3
+
+3. blazeclan> db.emps.deleteMany({designation: {$eq: 'SALESMAN'}})
+{ acknowledged: true, deletedCount: 4 }
+
+4.   blazeclan> db.emps.find({_id: 7900},{salary:1})
+[ { _id: 7900, salary: 950} ]
+
+  blazeclan> db.emps.update({_id: 7900},{$set: {salary: 1200}})
+DeprecationWarning: Collection.update() is deprecated. Use updateOne, updateMany, or bulkWrite.
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+
+  blazeclan> db.emps.find({_id: 7900},{salary:1})
+[ { _id: 7900, salary: 1200 } ]
+
+5. If $set is not used - 
+   blazeclan> db.emps.update({_id: 7900},{salary: 1200})
+MongoInvalidArgumentError: Update document requires atomic operators
+NOTE: $inc operator can be used to incrementr the salary.
+
+6. blazeclan> db.emps.find({designation: 'MANAGER'}, {name:1, salary:1})
+[
+  { _id: 7566, salary: 2975 },
+  { _id: 7782, salary: 2450 },
+  { _id: 7698, salary: 2850 }
+]
+blazeclan> db.emps.updateMany({designation: 'MANAGER'},{$set: {salary: 3025}})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 3,
+  modifiedCount: 3,
+  upsertedCount: 0
+}
+blazeclan> db.emps.find({designation: 'MANAGER'}, {name:1, salary:1})
+[
+  { _id: 7566, salary: 3025 },
+  { _id: 7782, salary: 3025 },
+  { _id: 7698, salary: 3025 }
+]
+
+7. blazeclan> db.emps.updateOne({_id: 7566},{$inc: {salary: 25}})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+blazeclan> db.emps.find({_id: 7566}, {name:1, salary:1})
+[ { _id: 7566, salary: 3050 } ]
+
+8. blazeclan> db.emps.updateMany({designation: 'ANALYST'},{$inc: {count: 1}})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 2,
+  modifiedCount: 2,
+  upsertedCount: 0
+}
+blazeclan> db.emps.find({designation: {$eq: 'ANALYST'}})
+[
+  {
+    _id: 7902,
+    empName: 'Ford',
+    designation: 'ANALYST',
+    mgrID: 7566,
+    hireDate: '1981-12-03T00:00:00',
+    salary: 3000,
+    deptID: 20,
+    hasComm: false,
+    count: 1
+  },
+  {
+    _id: 7788,
+    empName: 'Scott',
+    designation: 'ANALYST',
+    mgrID: 7566,
+    hireDate: '1982-12-09T00:00:00',
+    salary: 3000,
+    deptID: 20,
+    hasComm: false,
+    count: 1
+  }
+]
+NOTE: New field count is added
+
+9. blazeclan> db.emps.updateMany({designation: 'TESTER'},{$inc: {count: 1}})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 0,
+  modifiedCount: 0,
+  upsertedCount: 0
+}
+NOTE: no document found and also not added
+blazeclan> db.emps.updateMany({designation: 'TESTERS'},{$inc: {count: 1}},{upsert: true})
+{
+  acknowledged: true,
+  insertedId: ObjectId("6314f7ab993e9eaf63122702"),
+  matchedCount: 0,
+  modifiedCount: 0,
+  upsertedCount: 1
+}
+blazeclan> db.emps.find({designation: {$eq: 'TESTERS'}})
+[
+  {
+    _id: ObjectId("6314f7ab993e9eaf63122702"),
+    designation: 'TESTERS',
+    count: 1
+  }
+]
+NOTE: New document created
+
+10. blazeclan> db.emps.updateMany({designation: 'MANAGER'}, {$unset: {count: ""}})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 3,
+  modifiedCount: 0,
+  upsertedCount: 0
+}
+
+11. blazeclan> db.depts.find()
+[
+  { _id: 20, deptName: 'Research', location: 'Dallas' },
+  { _id: 30, deptName: 'Sales', location: 'Chicago' },
+  { _id: 10, deptName: 'Accounting', location: 'New York' }
+]
+blazeclan> db.depts.updateMany({}, {$rename: {"location": "city"}})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 3,
+  modifiedCount: 3,
+  upsertedCount: 0
+}
+blazeclan> db.depts.find()
+[
+  { _id: 20, deptName: 'Research', city: 'Dallas' },
+  { _id: 30, deptName: 'Sales', city: 'Chicago' },
+  { _id: 10, deptName: 'Accounting', city: 'New York' }
+]
+
+12. blazeclan> db.depts.aggregate([{$group: {_id: "$deptName"}}])
+[ { _id: 'Sales' }, { _id: 'Accounting' }, { _id: 'Research' } ]
+blazeclan> db.emps.aggregate([{$group: {_id: "$designation"}}])
+[
+  { _id: 'ANALYST' },
+  { _id: 'TESTERS' },
+  { _id: 'PRESIDENT' },
+  { _id: 'CLERK' },
+  { _id: 'MANAGER' }
+]
+
+13. blazeclan> db.emps.aggregate([{$group: {_id: "$deptID",count:{$count:{}}}}])
+[
+  { _id: 30, count: 2 },
+  { _id: 10, count: 3 },
+  { _id: 20, count: 5 },
+  { _id: null, count: 1 }
+]
+blazeclan> db.emps.aggregate([{$group: {_id: "$designation",count:{$count:{}}}}])
+[
+  { _id: 'PRESIDENT', count: 1 },
+  { _id: 'CLERK', count: 4 },
+  { _id: 'ANALYST', count: 2 },
+  { _id: 'MANAGER', count: 3 },
+  { _id: 'TESTERS', count: 1 }
+]
+
+14. blazeclan> db.emps.aggregate([{$group: {_id: "$deptID", salarySum:{$sum:"$salary"}}}])
+[
+  { _id: 20, salarySum: 10950 },
+  { _id: 10, salarySum: 9325 },
+  { _id: 30, salarySum: 4225 },
+  { _id: null, salarySum: 0 }
+]
+blazeclan> db.emps.aggregate([{$group: {_id: "$designation", salarySum:{$sum:"$salary"}}}])
+[
+  { _id: 'ANALYST', salarySum: 6000 },
+  { _id: 'TESTERS', salarySum: 0 },
+  { _id: 'PRESIDENT', salarySum: 5000 },
+  { _id: 'CLERK', salarySum: 4400 },
+  { _id: 'MANAGER', salarySum: 9100 }
+]
+
+15. blazeclan> db.emps.aggregate([{$group: {_id: "$designation", salaryAvg:{$avg:"$salary"},salaryMin:{$min:"$salary"},salaryMax:{$max:"$salary"}}}])
+[
+  { _id: 'CLERK', salaryAvg: 1100, salaryMin: 800, salaryMax: 1300 },
+  {
+    _id: 'MANAGER',
+    salaryAvg: 3033.3333333333335,
+    salaryMin: 3025,
+    salaryMax: 3050
+  },
+  { _id: 'ANALYST', salaryAvg: 3000, salaryMin: 3000, salaryMax: 3000 },
+  { _id: 'TESTERS', salaryAvg: null, salaryMin: null, salaryMax: null },
+  {
+    _id: 'PRESIDENT',
+    salaryAvg: 5000,
+    salaryMin: 5000,
+    salaryMax: 5000
+  }
+]
+blazeclan> db.emps.aggregate([{$group: {_id: "$deptID", salaryAvg:{$avg:"$salary"},salaryMin:{$min:"$salary"},salaryMax:{$max:"$salary"}}}])
+[
+  {
+    _id: 10,
+    salaryAvg: 3108.3333333333335,
+    salaryMin: 1300,
+    salaryMax: 5000
+  },
+  { _id: 20, salaryAvg: 2190, salaryMin: 800, salaryMax: 3050 },
+  { _id: null, salaryAvg: null, salaryMin: null, salaryMax: null },
+  { _id: 30, salaryAvg: 2112.5, salaryMin: 1200, salaryMax: 3025 }
+]
+
+16. blazeclan> db.emps.aggregate([{$match: {deptID: {$eq:20}}},{$group: {_id: "$designation",count:{$sum:1}}}])
+[
+  { _id: 'MANAGER', count: 1 },
+  { _id: 'CLERK', count: 2 },
+  { _id: 'ANALYST', count: 2 }
+]
+
+17. blazeclan> db.emps.aggregate([{$match: {deptID: {$eq:20}}},{$group: {_id: "$designation",count:{$sum:1}}},{$sort:{count: 1}}])
+[
+  { _id: 'MANAGER', count: 1 },
+  { _id: 'ANALYST', count: 2 },
+  { _id: 'CLERK', count: 2 }
+]
