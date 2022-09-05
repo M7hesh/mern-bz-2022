@@ -1,1 +1,290 @@
-mysql> Terminal close -- exit!
+MySql HOL - 7
+
+mysql> USE pubs;
+Database changed
+
+mysql> CREATE TABLE MY_EMPLOYEE(ID INT(4) PRIMARY KEY AUTO_INCREMENT,LAST_NAME VARCHAR(25),FIRST_NAME VARCHAR(25),USERID  VARCHAR(8),SALARY FLOAT(9,2));
+Query OK, 0 rows affected, 2 warnings (0.05 sec)
+
+mysql> DESC MY_EMPLOYEE;
++------------+-------------+------+-----+---------+----------------+
+| Field      | Type        | Null | Key | Default | Extra          |
++------------+-------------+------+-----+---------+----------------+
+| ID         | int         | NO   | PRI | NULL    | auto_increment |
+| LAST_NAME  | varchar(25) | YES  |     | NULL    |                |
+| FIRST_NAME | varchar(25) | YES  |     | NULL    |                |
+| USERID     | varchar(8)  | YES  |     | NULL    |                |
+| SALARY     | float(9,2)  | YES  |     | NULL    |                |
++------------+-------------+------+-----+---------+----------------+
+5 rows in set (0.00 sec)
+
+mysql> INSERT INTO MY_EMPLOYEE VALUES 
+    -> (1, 'Patel', 'Ralph', 'rpatel', 795);
+Query OK, 1 row affected (0.02 sec)
+
+mysql> INSERT INTO MY_EMPLOYEE (ID, LAST_NAME, FIRST_NAME, USERID, SALARY)
+    -> VALUES (2, 'Dancs', 'Betty', 'bdancs', 860);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> SELECT * FROM MY_EMPLOYEE
+    -> ;
++----+-----------+------------+--------+--------+
+| ID | LAST_NAME | FIRST_NAME | USERID | SALARY |
++----+-----------+------------+--------+--------+
+|  1 | Patel     | Ralph      | rpatel | 795.00 |
+|  2 | Dancs     | Betty      | bdancs | 860.00 |
++----+-----------+------------+--------+--------+
+2 rows in set (0.00 sec)
+
+mysql> \. D:\loadEmp.sql
+Query OK, 1 row affected (0.01 sec)
+
+Query OK, 1 row affected (0.00 sec)
+
+mysql> SELECT * FROM MY_EMPLOYEE;
++----+-----------+------------+-----------+---------+
+| ID | LAST_NAME | FIRST_NAME | USERID    | SALARY  |
++----+-----------+------------+-----------+---------+
+|  1 | Patel     | Ralph      | rpatel    |  795.00 |
+|  2 | Dancs     | Betty      | bdancs    |  860.00 |
+|  3 | Biri      | Ben        | bbiri     | 1100.00 |
+|  4 | Newman    | Chad       | cnewman   |  750.00 |
++----+-----------+------------+-----------+---------+
+4 rows in set (0.00 sec)
+
+mysql> SET autocommit = 0;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> START TRANSACTION;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> UPDATE MY_EMPLOYEE SET FIRST_NAME = 'DEXTER' WHERE ID = 3;
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> UPDATE MY_EMPLOYEE SET SALARY = 1000 WHERE SALARY < 900;
+Query OK, 3 rows affected (0.00 sec)
+Rows matched: 3  Changed: 3  Warnings: 0
+
+mysql> SELECT * FROM MY_EMPLOYEE;
++----+-----------+------------+---------+---------+
+| ID | LAST_NAME | FIRST_NAME | USERID  | SALARY  |
++----+-----------+------------+---------+---------+
+|  1 | Patel     | Ralph      | rpatel  | 1000.00 |
+|  2 | Dancs     | Betty      | bdancs  | 1000.00 |
+|  3 | Biri      | DEXTER     | bbiri   | 1100.00 |
+|  4 | Newman    | Chad       | cnewman | 1000.00 |
++----+-----------+------------+---------+---------+
+4 rows in set (0.00 sec)
+
+mysql> DELETE FROM MY_EMPLOYEE WHERE FIRST_NAME = 'Betty' AND LAST_NAME = 'Dancs';
+Query OK, 1 row affected (0.00 sec)
+
+mysql> SELECT * FROM MY_EMPLOYEE;
++----+-----------+------------+---------+---------+
+| ID | LAST_NAME | FIRST_NAME | USERID  | SALARY  |
++----+-----------+------------+---------+---------+
+|  1 | Patel     | Ralph      | rpatel  | 1000.00 |
+|  3 | Biri      | DEXTER     | bbiri   | 1100.00 |
+|  4 | Newman    | Chad       | cnewman | 1000.00 |
++----+-----------+------------+---------+---------+
+3 rows in set (0.00 sec)
+
+mysql> COMMIT;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> \. D:\loadEmp.sql
+ERROR 1062 (23000): Duplicate entry '3' for key 'my_employee.PRIMARY'
+ERROR 1062 (23000): Duplicate entry '4' for key 'my_employee.PRIMARY'
+ERROR 1406 (22001): Data too long for column 'USERID' at row 1
+mysql> SELECT * FROM MY_EMPLOYEE;
++----+-----------+------------+---------+---------+
+| ID | LAST_NAME | FIRST_NAME | USERID  | SALARY  |
++----+-----------+------------+---------+---------+
+|  1 | Patel     | Ralph      | rpatel  | 1000.00 |
+|  3 | Biri      | DEXTER     | bbiri   | 1100.00 |
+|  4 | Newman    | Chad       | cnewman | 1000.00 |
++----+-----------+------------+---------+---------+
+3 rows in set (0.00 sec)
+
+mysql> -- To add record where id = 5 we need to update the length of USERID
+mysql> SAVEPOINT MySqlHOL7Savepoint;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> DELETE FROM MY_EMPLOYEE;
+Query OK, 3 rows affected (0.00 sec)
+
+mysql> SELECT * FROM MY_EMPLOYEE;
+Empty set (0.00 sec)
+
+mysql> ROLLBACK TO SAVEPOINT MySqlHOL7Savepoint;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> SELECT * FROM MY_EMPLOYEE;
++----+-----------+------------+---------+---------+
+| ID | LAST_NAME | FIRST_NAME | USERID  | SALARY  |
++----+-----------+------------+---------+---------+
+|  1 | Patel     | Ralph      | rpatel  | 1000.00 |
+|  3 | Biri      | DEXTER     | bbiri   | 1100.00 |
+|  4 | Newman    | Chad       | cnewman | 1000.00 |
++----+-----------+------------+---------+---------+
+3 rows in set (0.00 sec)
+
+mysql> COMMIT;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> SET AUTOCOMMIT = 1;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> --             MySQL HOL-8
+mysql> CREATE TABLE EMPLOYEE(EMP_ID INT(4) PRIMARY KEY AUTO_INCREMENT, NAME VARCHAR(25), LAST_NAME VARCHAR(25), BASIC_SAL FLOAT(9,2));
+Query OK, 0 rows affected, 2 warnings (0.04 sec)
+
+mysql> DESC EMPLOYEE;
++-----------+-------------+------+-----+---------+----------------+
+| Field     | Type        | Null | Key | Default | Extra          |
++-----------+-------------+------+-----+---------+----------------+
+| EMP_ID    | int         | NO   | PRI | NULL    | auto_increment |
+| NAME      | varchar(25) | YES  |     | NULL    |                |
+| LAST_NAME | varchar(25) | YES  |     | NULL    |                |
+| BASIC_SAL | float(9,2)  | YES  |     | NULL    |                |
++-----------+-------------+------+-----+---------+----------------+
+4 rows in set (0.00 sec)
+
+mysql> ALTER TABLE employee MODIFY NAME VARCHAR(5);
+Query OK, 0 rows affected (0.05 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> INSERT INTO employee VALUES
+    -> (1,'Anand','Ralph',795),
+    -> (2,'Dancs','Betty',860),
+    -> (3,'Biri','Ben',1100),
+    -> (4,'Neer','Chad',750),
+    -> (5,'Ropen','Audry',1550);
+Query OK, 5 rows affected (0.01 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> UPDATE employee SET BASIC_SAL = NULL WHERE mod(EMP_ID, 2) = 0;
+Query OK, 2 rows affected (0.01 sec)
+Rows matched: 2  Changed: 2  Warnings: 0
+
+mysql> SELECT * FROM employee;
++--------+-------+-----------+-----------+
+| EMP_ID | NAME  | LAST_NAME | BASIC_SAL |
++--------+-------+-----------+-----------+
+|      1 | Anand | Ralph     |    795.00 |
+|      2 | Dancs | Betty     |      NULL |
+|      3 | Biri  | Ben       |   1100.00 |
+|      4 | Neer  | Chad      |      NULL |
+|      5 | Ropen | Audry     |   1550.00 |
++--------+-------+-----------+-----------+
+5 rows in set (0.00 sec)
+
+mysql> ALTER TABLE employee MODIFY BASIC_SAL BIGINT NOT NULL;
+ERROR 1265 (01000): Data truncated for column 'BASIC_SAL' at row 2
+
+mysql> ALTER TABLE employee MODIFY BASIC_SAL BIGINT;
+Query OK, 5 rows affected (0.06 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> desc employee;
++-----------+-------------+------+-----+---------+----------------+
+| Field     | Type        | Null | Key | Default | Extra          |
++-----------+-------------+------+-----+---------+----------------+
+| EMP_ID    | int         | NO   | PRI | NULL    | auto_increment |
+| NAME      | varchar(5)  | YES  |     | NULL    |                |
+| LAST_NAME | varchar(25) | YES  |     | NULL    |                |
+| BASIC_SAL | bigint      | YES  |     | NULL    |                |
++-----------+-------------+------+-----+---------+----------------+
+4 rows in set (0.00 sec)
+
+mysql> ALTER TABLE employee ADD EMAIL_ID VARCHAR(20) NOT NULL;
+Query OK, 0 rows affected (0.02 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> DESC employee;
++-----------+-------------+------+-----+---------+----------------+
+| Field     | Type        | Null | Key | Default | Extra          |
++-----------+-------------+------+-----+---------+----------------+
+| EMP_ID    | int         | NO   | PRI | NULL    | auto_increment |
+| NAME      | varchar(5)  | YES  |     | NULL    |                |
+| LAST_NAME | varchar(25) | YES  |     | NULL    |                |
+| BASIC_SAL | bigint      | YES  |     | NULL    |                |
+| EMAIL_ID  | varchar(20) | NO   |     | NULL    |                |
++-----------+-------------+------+-----+---------+----------------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT * FROM employee;
++--------+-------+-----------+-----------+----------+
+| EMP_ID | NAME  | LAST_NAME | BASIC_SAL | EMAIL_ID |
++--------+-------+-----------+-----------+----------+
+|      1 | Anand | Ralph     |       795 |          |
+|      2 | Dancs | Betty     |      NULL |          |
+|      3 | Biri  | Ben       |      1100 |          |
+|      4 | Neer  | Chad      |      NULL |          |
+|      5 | Ropen | Audry     |      1550 |          |
++--------+-------+-----------+-----------+----------+
+5 rows in set (0.00 sec)
+
+mysql> INSERT INTO employee VALUES
+    -> (6,'Andy','Jos', 1000)
+    -> ;
+ERROR 1136 (21S01): Column count doesn't match value count at row 1
+
+mysql> ALTER TABLE employee DROP COLUMN EMAIL_ID;
+Query OK, 0 rows affected (0.02 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> DESC employee;
++-----------+-------------+------+-----+---------+----------------+
+| Field     | Type        | Null | Key | Default | Extra          |
++-----------+-------------+------+-----+---------+----------------+
+| EMP_ID    | int         | NO   | PRI | NULL    | auto_increment |
+| NAME      | varchar(5)  | YES  |     | NULL    |                |
+| LAST_NAME | varchar(25) | YES  |     | NULL    |                |
+| BASIC_SAL | bigint      | YES  |     | NULL    |                |
++-----------+-------------+------+-----+---------+----------------+
+4 rows in set (0.00 sec)
+
+mysql> RENAME TABLE employee TO MY_EMP2;
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> DESC employee;
+ERROR 1146 (42S02): Table 'pubs.employee' doesn't exist
+mysql> DESC MY_EMP2;
++-----------+-------------+------+-----+---------+----------------+
+| Field     | Type        | Null | Key | Default | Extra          |
++-----------+-------------+------+-----+---------+----------------+
+| EMP_ID    | int         | NO   | PRI | NULL    | auto_increment |
+| NAME      | varchar(5)  | YES  |     | NULL    |                |
+| LAST_NAME | varchar(25) | YES  |     | NULL    |                |
+| BASIC_SAL | bigint      | YES  |     | NULL    |                |
++-----------+-------------+------+-----+---------+----------------+
+4 rows in set (0.00 sec)
+
+mysql>  DROP TABLE MY_EMP2;
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> DESC MY_EMP2;
+ERROR 1146 (42S02): Table 'pubs.my_emp2' doesn't exist
+mysql> SHOW tables;
++----------------+
+| Tables_in_pubs |
++----------------+
+| authors        |
+| departments    |
+| employees      |
+| my_employee    |
+| publishers     |
+| salgrades      |
+| titleauthor    |
+| titles         |
++----------------+
+8 rows in set (0.00 sec)
+
+mysql>  DROP TABLE MY_EMP2;
+ERROR 1051 (42S02): Unknown table 'pubs.my_emp2'
+
+mysql>  DROP TABLE IF EXISTS MY_EMP2;
+Query OK, 0 rows affected, 1 warning (0.01 sec)
+
