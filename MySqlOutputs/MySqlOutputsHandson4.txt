@@ -1,0 +1,239 @@
+============================================================== MySql HOL 4 =======================================================
+mysql> USE pubs
+Database changed
+mysql> SELECT MIN(price) "Minimum Price", MAX(price) "Maximum Price", AVG(price) "Average price" FROM titles;
++---------------+---------------+---------------+
+| Minimum Price | Maximum Price | Average price |
++---------------+---------------+---------------+
+|        2.9900 |       22.9500 |   14.76625000 |
++---------------+---------------+---------------+
+1 row in set (0.00 sec)
+
+mysql> SELECT COUNT(title), type FROM titles
+    -> GROUP BY type;
++--------------+--------------+
+| COUNT(title) | type         |
++--------------+--------------+
+|            4 | business     |
+|            2 | mod_cook     |
+|            1 | UNDECIDED    |
+|            3 | popular_comp |
+|            5 | psychology   |
+|            3 | trad_cook    |
++--------------+--------------+
+6 rows in set (0.00 sec)
+
+mysql> SELECT COUNT(title), type FROM titles
+    -> WHERE type = 'business'
+    -> GROUP BY type;
++--------------+----------+
+| COUNT(title) | type     |
++--------------+----------+
+|            4 | business |
++--------------+----------+
+1 row in set (0.00 sec)
+
+mysql> SELECT type "Book Category", ROUND(AVG(price), 2) "Average Price"
+    -> FROM titles
+    -> GROUP BY type;
++---------------+---------------+
+| Book Category | Average Price |
++---------------+---------------+
+| business      |         13.73 |
+| mod_cook      |         11.49 |
+| UNDECIDED     |          NULL |
+| popular_comp  |         21.48 |
+| psychology    |         13.50 |
+| trad_cook     |         15.96 |
++---------------+---------------+
+6 rows in set (0.00 sec)
+
+mysql> SELECT CONCAT(UPPER(SUBSTRING(type,1,1)),LOWER(SUBSTRING(type,2))) "Book Category", COUNT(type) "# of Books" FROM titles
+    -> GROUP BY type;
++---------------+------------+
+| Book Category | # of Books |
++---------------+------------+
+| Business      |          4 |
+| Mod_cook      |          2 |
+| Undecided     |          1 |
+| Popular_comp  |          3 |
+| Psychology    |          5 |
+| Trad_cook     |          3 |
++---------------+------------+
+6 rows in set (0.00 sec)
+
+mysql> SELECT CONCAT(UPPER(SUBSTRING(type,1,1)),LOWER(SUBSTRING(type,2))) "Book Category", COUNT(type) "# of Books" FROM titles
+    -> GROUP BY type
+    -> ORDER BY 2;
++---------------+------------+
+| Book Category | # of Books |
++---------------+------------+
+| Undecided     |          1 |
+| Mod_cook      |          2 |
+| Popular_comp  |          3 |
+| Trad_cook     |          3 |
+| Business      |          4 |
+| Psychology    |          5 |
++---------------+------------+
+6 rows in set (0.00 sec)
+
+mysql> SELECT CONCAT(UPPER(SUBSTRING(type,1,1)),LOWER(SUBSTRING(type,2))) "Book Category", COUNT(type) "# of Books" FROM titles
+    -> GROUP BY type
+    -> ORDER BY 2 DESC;
++---------------+------------+
+| Book Category | # of Books |
++---------------+------------+
+| Psychology    |          5 |
+| Business      |          4 |
+| Popular_comp  |          3 |
+| Trad_cook     |          3 |
+| Mod_cook      |          2 |
+| Undecided     |          1 |
++---------------+------------+
+6 rows in set (0.00 sec)
+
+mysql> SELECT type, AVG(price) FROM titles
+    -> GROUP BY type WITH ROLLUP;
++--------------+-------------+
+| type         | AVG(price)  |
++--------------+-------------+
+| business     | 13.73000000 |
+| mod_cook     | 11.49000000 |
+| popular_comp | 21.47500000 |
+| psychology   | 13.50400000 |
+| trad_cook    | 15.96333333 |
+| UNDECIDED    |        NULL |
+| NULL         | 14.76625000 |
++--------------+-------------+
+7 rows in set (0.00 sec)
+
+mysql> SELECT type, AVG(price) FROM titles
+    -> GROUP BY type
+    -> ORDER BY 2 DESC
+    -> LIMIT 2;
++--------------+-------------+
+| type         | AVG(price)  |
++--------------+-------------+
+| popular_comp | 21.47500000 |
+| trad_cook    | 15.96333333 |
++--------------+-------------+
+2 rows in set (0.00 sec)
+
+mysql> SELECT type, COUNT(title) "count" FROM titles
+    -> GROUP BY type
+    -> HAVING count < 4
+    -> 
+    -> ORDER BY count DESC;
++--------------+-------+
+| type         | count |
++--------------+-------+
+| popular_comp |     3 |
+| trad_cook    |     3 |
+| mod_cook     |     2 |
+| UNDECIDED    |     1 |
++--------------+-------+
+4 rows in set (0.00 sec)
+
+mysql> SELECT SUM(ttd_sales) "Quantity of Sales", pub_id "Publisher ID"
+    -> FROM titles
+    -> GROUP BY pub_id
+    -> ORDER BY 1 DESC;
++-------------------+--------------+
+| Quantity of Sales | Publisher ID |
++-------------------+--------------+
+|             44219 | 0877         |
+|             28286 | 0736         |
+|             24941 | 1389         |
++-------------------+--------------+
+3 rows in set (0.00 sec)
+
+mysql> SELECT IFNULL(type, 'ALL types') "Book Type", SUM(ttd_sales) "Quantity of Sales"
+    -> FROM titles
+    -> GROUP BY type WITH ROLLUP;
++--------------+-------------------+
+| Book Type    | Quantity of Sales |
++--------------+-------------------+
+| business     |             30788 |
+| mod_cook     |             24278 |
+| popular_comp |             12875 |
+| psychology   |              9939 |
+| trad_cook    |             19566 |
+| UNDECIDED    |              NULL |
+| ALL types    |             97446 |
++--------------+-------------------+
+7 rows in set (0.00 sec)
+
+mysql> SELECT type, SUM(ttd_sales) "totalQuantitySales"
+    -> FROM titles
+    -> GROUP BY type HAVING totalQuantitySales < 10000;
++------------+--------------------+
+| type       | totalQuantitySales |
++------------+--------------------+
+| psychology |               9939 |
++------------+--------------------+
+1 row in set (0.00 sec)
+
+mysql> SELECT type, SUM(ttd_sales) "totalQuantitySales"
+    -> FROM titles
+    -> GROUP BY type
+    -> HAVING totalQuantitySales >= 10000 AND totalQuantitySales < 25000;
++--------------+--------------------+
+| type         | totalQuantitySales |
++--------------+--------------------+
+| mod_cook     |              24278 |
+| popular_comp |              12875 |
+| trad_cook    |              19566 |
++--------------+--------------------+
+3 rows in set (0.00 sec)mysql> SELECT pub_id, SUM(ttd_sales)
+    -> FROM titles
+    -> GROUP BY pub_id HAVING SUM(ttd_sales) > 25000;
++--------+----------------+
+| pub_id | SUM(ttd_sales) |
++--------+----------------+
+| 0736   |          28286 |
+| 0877   |          44219 |
++--------+----------------+
+2 rows in set (0.00 sec)
+
+mysql> SELECT type, pub_id, AVG(price), SUM(ttd_sales) "totalQuantitySales"
+    -> FROM titles
+    -> GROUP BY type, pub_id;
++--------------+--------+-------------+--------------------+
+| type         | pub_id | AVG(price)  | totalQuantitySales |
++--------------+--------+-------------+--------------------+
+| business     | 1389   | 17.31000000 |              12066 |
+| business     | 0736   |  2.99000000 |              18722 |
+| mod_cook     | 0877   | 11.49000000 |              24278 |
+| UNDECIDED    | 0877   |        NULL |               NULL |
+| popular_comp | 1389   | 21.47500000 |              12875 |
+| psychology   | 0877   | 21.59000000 |                375 |
+| psychology   | 0736   | 11.48250000 |               9564 |
+| trad_cook    | 0877   | 15.96333333 |              19566 |
++--------------+--------+-------------+--------------------+
+8 rows in set (0.00 sec)
+
+mysql> SELECT IFNULL(type, "AllTypes") "Book Type",
+    -> IFNULL(pub_id, "====>") "Publisher ID", ROUND(AVG(price), 2) "Average Price", SUM(ttd_sales) "Qty of Sales"
+    -> FROM titles
+    -> GROUP BY type, pub_id WITH ROLLUP;
++--------------+--------------+---------------+--------------+
+| Book Type    | Publisher ID | Average Price | Qty of Sales |
++--------------+--------------+---------------+--------------+
+| business     | 0736         |          2.99 |        18722 |
+| business     | 1389         |         17.31 |        12066 |
+| business     | ====>        |         13.73 |        30788 |
+| mod_cook     | 0877         |         11.49 |        24278 |
+| mod_cook     | ====>        |         11.49 |        24278 |
+| popular_comp | 1389         |         21.48 |        12875 |
+| popular_comp | ====>        |         21.48 |        12875 |
+| psychology   | 0736         |         11.48 |         9564 |
+| psychology   | 0877         |         21.59 |          375 |
+| psychology   | ====>        |         13.50 |         9939 |
+| trad_cook    | 0877         |         15.96 |        19566 |
+| trad_cook    | ====>        |         15.96 |        19566 |
+| UNDECIDED    | 0877         |          NULL |         NULL |
+| UNDECIDED    | ====>        |          NULL |         NULL |
+| AllTypes     | ====>        |         14.77 |        97446 |
++--------------+--------------+---------------+--------------+
+15 rows in set (0.00 sec)
+

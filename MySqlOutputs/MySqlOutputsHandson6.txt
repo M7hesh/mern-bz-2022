@@ -1,0 +1,239 @@
+======================================================================= MySql HOL 6 =============================================================
+mysql> SELECT p.pub_id, p.pub_name
+    -> FROM publishers p
+    -> JOIN titles t ON p.pub_id = t.pub_id
+    -> WHERE t.type = 'business';
++--------+----------------------+
+| pub_id | pub_name             |
++--------+----------------------+
+| 1389   | Algodata Infosystems |
+| 1389   | Algodata Infosystems |
+| 0736   | New Moon Books       |
+| 1389   | Algodata Infosystems |
++--------+----------------------+
+4 rows in set (0.00 sec)
+
+mysql> SELECT p.pub_id, p.pub_name
+    -> FROM publishers p
+    -> WHERE EXISTS (SELECT 1 FROM titles t
+    -> WHERE t.type = 'business' AND t.pub_id = p.pub_id);
++--------+----------------------+
+| pub_id | pub_name             |
++--------+----------------------+
+| 1389   | Algodata Infosystems |
+| 0736   | New Moon Books       |
++--------+----------------------+
+2 rows in set (0.00 sec)
+
+mysql> SELECT p.pub_id, p.pub_name
+    -> FROM publishers p
+    -> JOIN titles t ON p.pub_id = t.pub_id
+    -> WHERE t.type != 'mod_cook';
++--------+----------------------+
+| pub_id | pub_name             |
++--------+----------------------+
+| 0736   | New Moon Books       |
+| 0736   | New Moon Books       |
+| 0736   | New Moon Books       |
+| 0736   | New Moon Books       |
+| 0736   | New Moon Books       |
+| 0877   | Binnet & Harley      |
+| 0877   | Binnet & Harley      |
+| 0877   | Binnet & Harley      |
+| 0877   | Binnet & Harley      |
+| 0877   | Binnet & Harley      |
+| 1389   | Algodata Infosystems |
+| 1389   | Algodata Infosystems |
+| 1389   | Algodata Infosystems |
+| 1389   | Algodata Infosystems |
+| 1389   | Algodata Infosystems |
+| 1389   | Algodata Infosystems |
++--------+----------------------+
+16 rows in set (0.03 sec)
+
+mysql> SELECT p.pub_id, p.pub_name
+    -> FROM publishers p
+    -> WHERE EXISTS (SELECT 1 FROM titles t
+    -> WHERE t.type != 'mod_cook' AND t.pub_id = p.pub_id);
++--------+----------------------+
+| pub_id | pub_name             |
++--------+----------------------+
+| 0736   | New Moon Books       |
+| 0877   | Binnet & Harley      |
+| 1389   | Algodata Infosystems |
++--------+----------------------+
+3 rows in set (0.00 sec)
+
+mysql> SELECT t.type, AVG(t.ttd_sales)
+    -> FROM titles t
+    -> WHERE t.type = ANY(SELECT t1.type FROM titles t1
+    -> WHERE t1.title = 'The Busy Executive\'s Database Guide'
+    -> OR t1.title = 'Is Anger the Enemy?')
+    -> GROUP BY t.type;
++------------+------------------+
+| type       | AVG(t.ttd_sales) |
++------------+------------------+
+| business   |        7697.0000 |
+| psychology |        1987.8000 |
++------------+------------------+
+2 rows in set (0.00 sec)
+
+mysql> SELECT p.pub_name
+    -> FROM publishers p
+    -> WHERE EXISTS (SELECT 1 FROM titles t
+    -> WHERE t.type = 'business' AND t.pub_id = p.pub_id);
++----------------------+
+| pub_name             |
++----------------------+
+| Algodata Infosystems |
+| New Moon Books       |
++----------------------+
+2 rows in set (0.00 sec)
+
+
+mysql> SELECT p.pub_id, p.pub_name
+    -> FROM publishers p
+    -> WHERE p.city = 'Paris';
++--------+--------------------+
+| pub_id | pub_name           |
++--------+--------------------+
+| 9999   | Lucerne Publishing |
++--------+--------------------+
+1 row in set (0.00 sec)
+
+mysql> SELECT t.title, t.advance
+    -> FROM titles t
+    -> WHERE t.advance > (SELECT AVG(t1.advance) FROM titles t1
+    -> WHERE t1.type = 'business');
++-----------------------------------------------------------------+------------+
+| title                                                           | advance    |
++-----------------------------------------------------------------+------------+
+| You Can Combat Computer Stress!                                 | 10125.0000 |
+| The Gourmet Microwave                                           | 15000.0000 |
+| But Is It User Friendly?                                        |  7000.0000 |
+| Secrets of Silicon Valley                                       |  8000.0000 |
+| Computer Phobic AND Non-Phobic Individuals: Behavior Variations |  7000.0000 |
+| Onions, Leeks, and Garlic: Cooking Secrets of the Mediterranean |  7000.0000 |
+| Sushi, Anyone?                                                  |  8000.0000 |
++-----------------------------------------------------------------+------------+
+7 rows in set (0.00 sec)
+
+mysql> SELECT CONCAT(a.au_fname, ' ', a.au_lname) "Author Name"
+    -> FROM authors a
+    -> JOIN titleauthor ta ON ta.au_id = a.au_id
+    -> JOIN titles t ON t.title_id = ta.title_id
+    -> WHERE t.title = 'Net Etiquette';
++-------------------+
+| Author Name       |
++-------------------+
+| Charlene Locksley |
++-------------------+
+1 row in set (0.00 sec)
+
+mysql> SELECT CONCAT(a.au_fname, ' ', a.au_lname) "Author Name"
+    -> FROM authors a
+    -> JOIN titleauthor ta ON ta.au_id = a.au_id
+    -> JOIN titles t ON t.title_id = ta.title_id
+    -> WHERE t.type = 'business';
++--------------------+
+| Author Name        |
++--------------------+
+| Marjorie Green     |
+| Abraham Bennet     |
+| Michael O'Leary    |
+| Stearns MacFeather |
+| Marjorie Green     |
++--------------------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT t.title, t.title_id
+    -> FROM titles t
+    -> WHERE t.price > (SELECT MAX(t1.price) 
+    -> FROM titles t1
+    -> JOIN publishers p ON p.pub_id = t1.pub_id
+    -> WHERE p.pub_id = 0736);
++-----------------------------------------------------------------+----------+
+| title                                                           | title_id |
++-----------------------------------------------------------------+----------+
+| But Is It User Friendly?                                        | PC1035   |
+| Secrets of Silicon Valley                                       | PC8888   |
+| Computer Phobic AND Non-Phobic Individuals: Behavior Variations | PS1372   |
+| Onions, Leeks, and Garlic: Cooking Secrets of the Mediterranean | TC3218   |
++-----------------------------------------------------------------+----------+
+4 rows in set (0.00 sec)
+
+mysql> SELECT t.title, t.title_id
+    -> FROM titles t
+    -> WHERE t.price > (SELECT MIN(t1.price) 
+    -> FROM titles t
+    -> JOIN publishers p ON p.pub_id = t1.pub_id
+    -> ^C
+mysql> ^C
+mysql> ^C
+mysql> SELECT t.title, t.title_id
+    -> FROM titles t
+    -> WHERE t.price > (SELECT MIN(t1.price) 
+    -> FROM titles t1
+    -> JOIN publishers p ON p.pub_id = t1.pub_id
+    -> WHERE p.pub_id = 1389);
++-----------------------------------------------------------------+----------+
+| title                                                           | title_id |
++-----------------------------------------------------------------+----------+
+| The Busy Executive's Database Guide                             | BU1032   |
+| Straight Talk About Computers                                   | BU7832   |
+| Silicon Valley Gastronomic Treats                               | MC2222   |
+| But Is It User Friendly?                                        | PC1035   |
+| Secrets of Silicon Valley                                       | PC8888   |
+| Computer Phobic AND Non-Phobic Individuals: Behavior Variations | PS1372   |
+| Prolonged Data Deprivation: Four Case Studies                   | PS3333   |
+| Onions, Leeks, and Garlic: Cooking Secrets of the Mediterranean | TC3218   |
+| Sushi, Anyone?                                                  | TC7777   |
++-----------------------------------------------------------------+----------+
+9 rows in set (0.00 sec)
+
+mysql> SELECT t.title, t.title_id
+    -> FROM titles t
+    -> WHERE t.price > (SELECT MIN(t1.price) 
+    -> FROM titles t1
+    -> JOIN publishers p ON p.pub_id = t1.pub_id
+    -> WHERE p.pub_id = 0736);
++-----------------------------------------------------------------+----------+
+| title                                                           | title_id |
++-----------------------------------------------------------------+----------+
+| The Busy Executive's Database Guide                             | BU1032   |
+| Cooking with Computers: Surreptitious Balance Sheets            | BU1111   |
+| Straight Talk About Computers                                   | BU7832   |
+| Silicon Valley Gastronomic Treats                               | MC2222   |
+| But Is It User Friendly?                                        | PC1035   |
+| Secrets of Silicon Valley                                       | PC8888   |
+| Computer Phobic AND Non-Phobic Individuals: Behavior Variations | PS1372   |
+| Is Anger the Enemy?                                             | PS2091   |
+| Life Without Fear                                               | PS2106   |
+| Prolonged Data Deprivation: Four Case Studies                   | PS3333   |
+| Emotional Security: A New Algorithm                             | PS7777   |
+| Onions, Leeks, and Garlic: Cooking Secrets of the Mediterranean | TC3218   |
+| Fifty Years in Buckingham Palace Kitchens                       | TC4203   |
+| Sushi, Anyone?                                                  | TC7777   |
++-----------------------------------------------------------------+----------+
+14 rows in set (0.00 sec)
+
+mysql> SELECT t.title, t.title_id
+    -> FROM titles t
+    -> WHERE t.price > (SELECT MIN(t1.price) 
+    -> FROM titles t1
+    -> JOIN publishers p ON p.pub_id = t1.pub_id
+    -> WHERE p.pub_id = 9999);
+Empty set (0.00 sec)
+
+mysql> SELECT p.pub_name
+    -> FROM publishers p
+    -> WHERE p.city = ANY(SELECT a.city 
+    -> FROM authors a);
++----------------------+
+| pub_name             |
++----------------------+
+| Algodata Infosystems |
++----------------------+
+1 row in set (0.00 sec)
+
+mysql> \t

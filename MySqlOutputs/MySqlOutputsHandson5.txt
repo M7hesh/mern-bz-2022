@@ -1,0 +1,256 @@
+================================================== MySql HOL 5 ======================================================
+mysql> SELECT t.title, p.pub_name
+    -> FROM titles t
+    -> JOIN publishers p ON p.pub_id = t.pub_id;
++-----------------------------------------------------------------+----------------------+
+| title                                                           | pub_name             |
++-----------------------------------------------------------------+----------------------+
+| The Busy Executive's Database Guide                             | Algodata Infosystems |
+| Cooking with Computers: Surreptitious Balance Sheets            | Algodata Infosystems |
+| You Can Combat Computer Stress!                                 | New Moon Books       |
+| Straight Talk About Computers                                   | Algodata Infosystems |
+| Silicon Valley Gastronomic Treats                               | Binnet & Harley      |
+| The Gourmet Microwave                                           | Binnet & Harley      |
+| The Psychology of Computer Cooking                              | Binnet & Harley      |
+| But Is It User Friendly?                                        | Algodata Infosystems |
+| Secrets of Silicon Valley                                       | Algodata Infosystems |
+| Net Etiquette                                                   | Algodata Infosystems |
+| Computer Phobic AND Non-Phobic Individuals: Behavior Variations | Binnet & Harley      |
+| Is Anger the Enemy?                                             | New Moon Books       |
+| Life Without Fear                                               | New Moon Books       |
+| Prolonged Data Deprivation: Four Case Studies                   | New Moon Books       |
+| Emotional Security: A New Algorithm                             | New Moon Books       |
+| Onions, Leeks, and Garlic: Cooking Secrets of the Mediterranean | Binnet & Harley      |
+| Fifty Years in Buckingham Palace Kitchens                       | Binnet & Harley      |
+| Sushi, Anyone?                                                  | Binnet & Harley      |
++-----------------------------------------------------------------+----------------------+
+18 rows in set (0.00 sec)
+
+mysql> SELECT t.ttd_sales, p.pub_name
+    -> FROM titles t
+    -> JOIN publishers p ON p.pub_id = t.pub_id
+    -> GROUP BY p.pub_name;
++-----------+----------------------+
+| ttd_sales | pub_name             |
++-----------+----------------------+
+|      4095 | Algodata Infosystems |
+|     18722 | New Moon Books       |
+|      2032 | Binnet & Harley      |
++-----------+----------------------+
+3 rows in set (0.00 sec)
+mysql> SELECT a.au_lname, a.city, p.pub_name, p.city
+    -> FROM publishers p
+    -> JOIN authors a ON p.city = a.city;
++----------+----------+----------------------+----------+
+| au_lname | city     | pub_name             | city     |
++----------+----------+----------------------+----------+
+| Carson   | Berkeley | Algodata Infosystems | Berkeley |
+| Bennet   | Berkeley | Algodata Infosystems | Berkeley |
++----------+----------+----------------------+----------+
+2 rows in set (0.00 sec)
+
+mysql> SELECT a.au_lname, a.city, p.pub_name, p.city
+    -> FROM publishers p
+    -> LEFT JOIN authors a ON p.city = a.city;
++----------+----------+-----------------------+------------+
+| au_lname | city     | pub_name              | city       |
++----------+----------+-----------------------+------------+
+| NULL     | NULL     | New Moon Books        | Boston     |
+| NULL     | NULL     | Binnet & Harley       | Washington |
+| Bennet   | Berkeley | Algodata Infosystems  | Berkeley   |
+| Carson   | Berkeley | Algodata Infosystems  | Berkeley   |
+| NULL     | NULL     | Five Lakes Publishing | Chicago    |
+| NULL     | NULL     | Ramona Publishers     | Dallas     |
+| NULL     | NULL     | GGG&G                 | Munchen    |
+| NULL     | NULL     | Scootney Books        | Ner York   |
+| NULL     | NULL     | Lucerne Publishing    | Paris      |
++----------+----------+-----------------------+------------+
+9 rows in set (0.00 sec)
+
+mysql> SELECT DISTINCT t.pub_id, p.pub_name
+    -> FROM publishers p
+    -> JOIN titles t ON t.pub_id = p.pub_id
+    -> WHERE type = 'business';
++--------+----------------------+
+| pub_id | pub_name             |
++--------+----------------------+
+| 1389   | Algodata Infosystems |
+| 0736   | New Moon Books       |
++--------+----------------------+
+2 rows in set (0.00 sec)
+
+mysql> SELECT t.title, CONCAT(a.au_fname, ' ', a.au_lname) "Author's Name"
+    -> FROM titles t
+    -> JOIN titleauthor ta ON ta.title_id = t.title_id
+    -> JOIN authors a ON a.au_id  = ta.au_id;
++-----------------------------------------------------------------+-------------------------+
+| title                                                           | Author's Name           |
++-----------------------------------------------------------------+-------------------------+
+| The Busy Executive's Database Guide                             | Marjorie Green          |
+| The Busy Executive's Database Guide                             | Abraham Bennet          |
+| Cooking with Computers: Surreptitious Balance Sheets            | Michael O'Leary         |
+| Cooking with Computers: Surreptitious Balance Sheets            | Stearns MacFeather      |
+| You Can Combat Computer Stress!                                 | Marjorie Green          |
+| Silicon Valley Gastronomic Treats                               | Innes del Castillo      |
+| The Gourmet Microwave                                           | Michel DeFrance         |
+| The Gourmet Microwave                                           | Anne Ringer             |
+| But Is It User Friendly?                                        | Cheryl Carson           |
+| Secrets of Silicon Valley                                       | Ann Dull                |
+| Secrets of Silicon Valley                                       | Michel DeFrance         |
+| Net Etiquette                                                   | Charlene Locksley       |
+| Computer Phobic AND Non-Phobic Individuals: Behavior Variations | Stearns MacFeather      |
+| Computer Phobic AND Non-Phobic Individuals: Behavior Variations | Livia Karsen            |
+| Is Anger the Enemy?                                             | Anne Ringer             |
+| Is Anger the Enemy?                                             | Albert Ringer           |
+| Life Without Fear                                               | Albert Ringer           |
+| Prolonged Data Deprivation: Four Case Studies                   | Johnson White           |
+| Emotional Security: A New Algorithm                             | Charlene Locksley       |
+| Onions, Leeks, and Garlic: Cooking Secrets of the Mediterranean | Sylvia Panteley         |
+| Fifty Years in Buckingham Palace Kitchens                       | Reginald Blotchet-Halls |
+| Sushi, Anyone?                                                  | Michael O'Leary         |
+| Sushi, Anyone?                                                  | Burt Gringlesby         |
++-----------------------------------------------------------------+-------------------------+
+23 rows in set (0.01 sec)
+
+mysql> create table Employees(emp_id varchar(10), ename varchar(40), dept_id varchar(20),
+    -> job varchar(35), mgr_id varchar(20), bsal decimal(10,4));
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> INSERT INTO Employees VALUES(101, 'Sameer', 10, 'President', NULL, 50000);INSERT INTO Employees VALUES(102, 'Srinivas', 10, 'VP', 101, 40000);INSERT INTO Employees VALUES(103, 'Nanda', 20, 'VP', 101, 40000);INSERT INTO Employees VALUES(104, 'Ram', 30, 'DGM', 102, 35000);INSERT INTO Employees VALUES(105, 'Vivek', 20, 'PM', 103, 30000);INSERT INTO Employees VALUES(106, 'Venkat', 20, 'Tech Lead', 105, 25000);
+Query OK, 1 row affected (0.01 sec)
+
+Query OK, 1 row affected (0.00 sec)
+
+Query OK, 1 row affected (0.00 sec)
+
+Query OK, 1 row affected (0.00 sec)
+
+Query OK, 1 row affected (0.00 sec)
+
+Query OK, 1 row affected (0.00 sec)
+
+mysql> CREATE TABLE Departments(dept_id VARCHAR(20), dname VARCHAR(40), location VARCHAR(40));
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> INSERT INTO Departments VALUES(10, 'Crop', 'Dallas');INSERT INTO Departments VALUES(20, 'PW', 'Bangalore');INSERT INTO Departments VALUES(30, 'SP', 'Pune');INSERT INTO Departments VALUES(40, 'MS', 'Hyderabad');
+Query OK, 1 row affected (0.01 sec)
+
+Query OK, 1 row affected (0.00 sec)
+
+Query OK, 1 row affected (0.00 sec)
+
+Query OK, 1 row affected (0.00 sec)
+
+mysql> CREATE TABLE salgrades(grade VARCHAR(20), min_sal DECIMAL(10,4), max_sal DECIMAL(10,4));
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> INSERT INTO salgrades VALUES('A', 40001, 50000);INSERT INTO salgrades VALUES('B', 30001, 40000);INSERT INTO salgrades VALUES('C', 20001, 30000);
+Query OK, 1 row affected (0.01 sec)
+
+Query OK, 1 row affected (0.00 sec)
+
+Query OK, 1 row affected (0.00 sec)
+
+mysql> SELECT e.ename, e.dept_id, d.dname
+    -> FROM employees e
+    -> JOIN departments d ON d.dept_id = e.dept_id;
++----------+---------+-------+
+| ename    | dept_id | dname |
++----------+---------+-------+
+| Sameer   | 10      | Crop  |
+| Srinivas | 10      | Crop  |
+| Nanda    | 20      | PW    |
+| Ram      | 30      | SP    |
+| Vivek    | 20      | PW    |
+| Venkat   | 20      | PW    |
++----------+---------+-------+
+6 rows in set (0.00 sec)
+
+mysql> SELECT DISTINCT e.job, d.location
+    -> FROM employees e
+    -> JOIN departments d on d.dept_id = e.dept_id
+    -> WHERE d.dept_id = 30;
++------+----------+
+| job  | location |
++------+----------+
+| DGM  | Pune     |
++------+----------+
+1 row in set (0.00 sec)
+
+mysql> SELECT e.ename, d.dname
+    -> FROM employees e
+    -> JOIN departments d on d.dept_id = e.dept_id
+    -> WHERE e.ename regexp '[A]';
++----------+-------+
+| ename    | dname |
++----------+-------+
+| Sameer   | Crop  |
+| Srinivas | Crop  |
+| Nanda    | PW    |
+| Ram      | SP    |
+| Venkat   | PW    |
++----------+-------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT e.ename, e.job, e.dept_id, d.dname
+    -> FROM employees e
+    -> JOIN departments d on d.dept_id = e.dept_id
+    -> WHERE d.location = 'dallas';
++----------+-----------+---------+-------+
+| ename    | job       | dept_id | dname |
++----------+-----------+---------+-------+
+| Sameer   | President | 10      | Crop  |
+| Srinivas | VP        | 10      | Crop  |
++----------+-----------+---------+-------+
+2 rows in set (0.00 sec)
+
+mysql> SELECT e.ename "Employee", e.emp_id "Emp No", m.ename "Manager", m.emp_id "Manager No."
+    -> FROM employees e
+    -> JOIN employees m on m.emp_id = e.mgr_id;
++----------+--------+----------+-------------+
+| Employee | Emp No | Manager  | Manager No. |
++----------+--------+----------+-------------+
+| Nanda    | 103    | Sameer   | 101         |
+| Srinivas | 102    | Sameer   | 101         |
+| Ram      | 104    | Srinivas | 102         |
+| Vivek    | 105    | Nanda    | 103         |
+| Venkat   | 106    | Vivek    | 105         |
++----------+--------+----------+-------------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT e.ename "Employee", e.emp_id "Emp No"
+    -> FROM employees e
+    -> WHERE e.mgr_id IS NULL;
++----------+--------+
+| Employee | Emp No |
++----------+--------+
+| Sameer   | 101    |
++----------+--------+
+1 row in set (0.00 sec)
+
+mysql> DESC salgrades
+    -> ;
++---------+---------------+------+-----+---------+-------+
+| Field   | Type          | Null | Key | Default | Extra |
++---------+---------------+------+-----+---------+-------+
+| grade   | varchar(20)   | YES  |     | NULL    |       |
+| min_sal | decimal(10,4) | YES  |     | NULL    |       |
+| max_sal | decimal(10,4) | YES  |     | NULL    |       |
++---------+---------------+------+-----+---------+-------+
+3 rows in set (0.00 sec)
+
+mysql> SELECT e.ename "Employee", e.job "Job", d.dname "Department", e.bsal "Salary",
+    -> (SELECT s.grade FROM salgrades s WHERE e.bsal > s.min_sal AND e.bsal <= s.max_sal) "Grade"
+    -> FROM employees e
+    -> JOIN departments d ON e.dept_id = d.dept_id;
++----------+-----------+------------+------------+-------+
+| Employee | Job       | Department | Salary     | Grade |
++----------+-----------+------------+------------+-------+
+| Sameer   | President | Crop       | 50000.0000 | A     |
+| Srinivas | VP        | Crop       | 40000.0000 | B     |
+| Nanda    | VP        | PW         | 40000.0000 | B     |
+| Ram      | DGM       | SP         | 35000.0000 | B     |
+| Vivek    | PM        | PW         | 30000.0000 | C     |
+| Venkat   | Tech Lead | PW         | 25000.0000 | C     |
++----------+-----------+------------+------------+-------+
+6 rows in set (0.00 sec)
