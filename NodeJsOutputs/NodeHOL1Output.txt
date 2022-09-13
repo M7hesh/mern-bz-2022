@@ -1,0 +1,328 @@
+Node.js Hands on 1:
+
+1. D:\Mern training\NodeFiles>node --version
+v16.13.0
+
+D:\Mern training\NodeFiles>npm --version
+8.1.0
+
+2.a. D:\Mern training\NodeFiles>node
+Welcome to Node.js v16.13.0.
+Type ".help" for more information.
+> console.log('Hello Node.js!')
+Hello Node.js!
+undefined
+> 10 + 33
+43
+> 3 - 32
+-29
+> 5 / 3
+1.6666666666666667
+> 35 * 5
+175
+> 1 == '1'
+true
+> 1==='1'
+false
+> 4<2
+false
+> 5>2
+true
+> 5!=5
+false
+
+2.b. > .help
+.break    Sometimes you get stuck, this gets you out
+.clear    Alias for .break
+.editor   Enter editor mode
+.exit     Exit the REPL
+.help     Print this help message
+.load     Load JS from a file into the REPL session
+.save     Save all evaluated commands in this REPL session to a file
+
+Press Ctrl+C to abort current expression, Ctrl+D to exit the REPL
+>
+
+D:\Mern training\NodeFiles>
+
+2.c D:\Mern training\NodeFiles>node
+Welcome to Node.js v16.13.0.
+Type ".help" for more information.
+> .editor
+// Entering editor mode (Ctrl+D to finish, Ctrl+C to cancel)
+ function greet(name) {
+... return `Hello ${name}. Welcome to Blazeclan. Have a NICE day!!!`
+... }
+undefined
+greet('Mahesh')
+'Hello Mahesh. Welcome to Blazeclan. Have a NICE day!!!'
+
+2.d. > .save D:\first.js
+Session saved to: D:\first.js
+
+2.e. > .load D:\first.js
+function greet(name) {
+return `Hello ${name} \n Welcome to Blazeclan \n Have a NICE day!!!`
+}
+greet('Mahesh')
+
+2.f. ctrl+L clears screen 
+> 2_4
+24
+> 4___2
+4___2
+  ^
+Uncaught SyntaxError: Only one underscore is allowed as numeric separator
+> 3_3 + 2
+35
+
+2.g. > Number.
+Number.__proto__             Number.hasOwnProperty        Number.isPrototypeOf
+Number.propertyIsEnumerable  Number.toLocaleString        Number.valueOf
+
+Number.apply                 Number.arguments             Number.bind
+Number.call                  Number.caller                Number.constructor
+Number.toString
+
+Number.EPSILON               Number.MAX_SAFE_INTEGER      Number.MAX_VALUE
+Number.MIN_SAFE_INTEGER      Number.MIN_VALUE             Number.NEGATIVE_INFINITY
+Number.NaN                   Number.POSITIVE_INFINITY     Number.isFinite
+Number.isInteger             Number.isNaN                 Number.isSafeInteger
+Number.length                Number.name                  Number.parseFloat
+Number.parseInt              Number.prototype
+
+> global.
+global.__proto__             global.hasOwnProperty        global.isPrototypeOf
+global.propertyIsEnumerable  global.toLocaleString        global.toString
+global.valueOf
+
+global.constructor
+
+global.AbortController       global.AbortSignal           global.AggregateError
+global.Array                 global.ArrayBuffer           global.Atomics
+global.BigInt                global.BigInt64Array         global.BigUint64Array
+global.Boolean               global.Buffer                global.DataView
+global.Date                  global.Error                 global.EvalError
+global.Event                 global.EventTarget           global.FinalizationRegistry
+global.Float32Array          global.Float64Array          global.Function
+global.Infinity              global.Int16Array            global.Int32Array
+global.Int8Array             global.Intl                  global.JSON
+global.Map                   global.Math                  global.MessageChannel
+global.MessageEvent          global.MessagePort           global.NaN
+global.Number                global.Object                global.Promise
+global.Proxy                 global.RangeError            global.ReferenceError
+global.Reflect               global.RegExp                global.Set
+global.SharedArrayBuffer     global.String                global.Symbol
+global.SyntaxError           global.TextDecoder           global.TextEncoder
+global.TypeError             global.URIError              global.URL
+global.URLSearchParams       global.Uint16Array           global.Uint32Array
+global.Uint8Array            global.Uint8ClampedArray     global.WeakMap
+global.WeakRef               global.WeakSet               global.WebAssembly
+global._                     global._error                global.assert
+global.async_hooks           global.atob                  global.btoa
+global.buffer                global.child_process         global.clearImmediate
+global.clearInterval         global.clearTimeout          global.cluster
+global.console               global.constants             global.crypto
+global.decodeURI             global.decodeURIComponent    global.dgram
+global.diagnostics_channel   global.dns                   global.domain
+global.encodeURI             global.encodeURIComponent    global.escape
+global.eval                  global.events                global.fs
+global.global                global.globalThis            global.http
+global.http2                 global.https                 global.inspector
+global.isFinite              global.isNaN                 global.module
+global.net                   global.os                    global.parseFloat
+global.parseInt              global.path                  global.perf_hooks
+global.performance           global.process               global.punycode
+global.querystring           global.queueMicrotask        global.readline
+global.repl                  global.require               global.setImmediate
+global.setInterval           global.setTimeout            global.stream
+global.string_decoder        global.sys                   global.timers
+global.tls                   global.trace_events          global.tty
+global.undefined             global.unescape              global.url
+global.util                  global.v8                    global.vm
+global.wasi                  global.worker_threads        global.zlib
+
+3. D:\Mern training\NodeFiles>cd ..
+D:\Mern training>cd ..
+D:\>node repl.js
+$ 10 +323
+333
+$ console.log('Hello world')
+Hello world
+undefined
+
+4. // Using repl in JavaScript file
+const local = require("repl");
+const process = require("process");
+local.start("$ "); // Starting a REPL session
+process.on("exit", function () {
+  console.error("Exiting REPL...\n");
+});
+
+D:\>node repl.js
+$ 4+4
+8
+$ .exit()
+Invalid REPL keyword
+$ .exit
+Exiting REPL...
+
+5. // Using repl in JavaScript file
+const local = require("repl");
+const process = require("process");
+local.start("$ "); // Starting a REPL session
+console.log("Command Line Arguments....");
+process.argv.forEach((value, index) => {
+  console.log(`${index}: ${value}`);
+});
+process.on("exit", function () {
+  console.error("Exiting REPL...\n");
+});
+
+D:\>node repl.js
+$ Command Line Arguments....
+0: C:\Program Files\nodejs\node.exe
+1: D:\repl.js
+
+Exiting REPL...
+
+D:\>node repl.js Mahesh 24
+$ Command Line Arguments....
+0: C:\Program Files\nodejs\node.exe
+1: D:\repl.js
+2: Mahesh
+3: 24
+
+Exiting REPL...
+
+6.a. D:\>node
+Welcome to Node.js v16.13.0.
+Type ".help" for more information.
+> console.
+console.__proto__             console.constructor
+console.hasOwnProperty        console.isPrototypeOf
+console.propertyIsEnumerable  console.toLocaleString
+console.toString              console.valueOf
+
+console.Console               console._ignoreErrors
+console._stderr               console._stderrErrorHandler
+console._stdout               console._stdoutErrorHandler
+console._times                console.assert
+console.clear                 console.context
+console.count                 console.countReset
+console.debug                 console.dir
+console.dirxml                console.error
+console.group                 console.groupCollapsed
+console.groupEnd              console.info
+console.log                   console.profile
+console.profileEnd            console.table
+console.time                  console.timeEnd
+console.timeLog               console.timeStamp
+console.trace                 console.warn
+
+6.b. D:\>node
+Welcome to Node.js v16.13.0.
+Type ".help" for more information.
+> .load D:\repl.js
+const num = Number(22);
+console.log("Console methods...");
+console.log("Format specifiers:");
+console.log("My %s has %d ears", "cat", 2);
+console.log("The number is: %o", num);
+
+$ Console methods...
+Format specifiers:
+My cat has 2 ears
+The number is: 22
+undefined
+
+$console.clear()
+undefined
+$
+
+D:\>node
+Welcome to Node.js v16.13.0.
+Type ".help" for more information.
+> .load D:\repl.js
+const oranges = ["orange", "orange"];
+const apples = ["just one apple"];
+oranges.forEach((fruit) => {
+  console.count(fruit);
+  });
+  apples.forEach((fruit) => {
+    console.count(fruit);
+    });
+
+$ orange: 1
+orange: 2
+just one apple: 1
+undefined
+
+6.c. const function2 = () => console.trace();
+const function1 = () => function2();
+function1();
+
+$ Trace
+    at function2 (REPL3:26:33)
+    at function1 (REPL3:27:25)
+    at REPL3:28:1
+    at Script.runInThisContext (node:vm:129:12)
+    at REPLServer.defaultEval (node:repl:562:29)
+    at bound (node:domain:421:15)
+    at REPLServer.runBound [as eval] (node:domain:432:12)
+    at REPLServer.onLine (node:repl:889:10)
+    at REPLServer.emit (node:events:402:35)
+    at REPLSe
+
+// time spent
+const doSomething = () => console.log("Testing....");
+const measureDoingSomething = () => {
+  console.time("doSomething()");
+    doSomething();
+      console.timeEnd("doSomething()");
+      };
+      measureDoingSomething();
+
+Testing....
+doSomething(): 0.297ms
+
+6.d. Node.js logging is an important part of supporting the complete application life cycle. From creation to debugging to planning new features, logs support us all the way. By analyzing the data in the logs, we can glean insights, resolve bugs much quicker, and detect problems early and as they happen.
+
+node script-file.js > log-file.txt
+
+This tells the shell to write the standard output of the command node script-file.js to your log file instead of the default, which is printing it to the console.
+
+This is called redirection and its very powerful. Say you wanted to write all errors to a separate file...
+
+node script-file.js >log-file.txt 2>error-file.txt
+Now all console.log are written to log-file.txt and all console.error are written to error.txt
+REFEERENCE: https://gist.github.com/eddex/520c065156b5b1fc3f7e17278b52fb9f
+https://stackify.com/node-js-logging/
+
+6.e. D:\>node
+Welcome to Node.js v16.13.0.
+Type ".help" for more information.
+> .editor
+// Entering editor mode (Ctrl+D to finish, Ctrl+C to cancel)
+console.log('\x1b[33m %s \x1b[0m', 'Hello') //yellow
+
+ Hello
+
+D:\>node
+Welcome to Node.js v16.13.0.
+Type ".help" for more information.
+> .editor
+// Entering editor mode (Ctrl+D to finish, Ctrl+C to cancel)
+console.log('\x1b[32m %s \x1b[0m', 'Green')
+
+ Green
+
+Welcome to Node.js v16.13.0.
+Type ".help" for more information.
+> .editor
+// Entering editor mode (Ctrl+D to finish, Ctrl+C to cancel)
+console.log('\x1b[31m %s \x1b[0m', 'Red')
+
+ Red
+
+

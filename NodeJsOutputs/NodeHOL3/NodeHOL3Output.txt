@@ -1,0 +1,242 @@
+======================================== Node HOL 3 ========================================
+
+1.a. const readFileSync = fs.readFileSync("./sample.txt", "utf-8");
+console.log(readFileSync);
+
+D:\Mern training\NodeFiles>node hol3.js
+In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. Lorem ipsum may be used as a placeholder before final copy is available. It is also used to temporarily replace text in a process called greeking, which allows designers to consider the form of a webpage or publication, without the meaning of the text influencing the design.
+
+1.b. fs.readFile("./sample.txt", "utf-8", (err, data) => {
+  if (err) {
+    console.error(err);
+    return;
+  }
+  console.log(data);
+});
+
+D:\Mern training\NodeFiles>node hol3.js
+In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. Lorem ipsum may be used as a placeholder before final copy is available. It is also used to temporarily replace text in a process called greeking, which allows designers to consider the form of a webpage or publication, without the meaning of the text influencing the design.
+
+2.a. const content = "File content";
+fs.writeFileSync("./sample.txt", content);
+
+2.b. const content = "File content 2";
+fs.writeFile("./sample.txt", content, (err) => {
+  if (err) console.error(err);
+});
+
+const content1 = "File content 3";
+fs.appendFile("./sample.txt", content1, (err) => {
+  if (err) console.error(err);
+});
+
+3. const fileName = "D:Mern trainingNodeFilesNodeNotessample.txt";
+dname = path.dirname(fileName);
+bname = path.basename(fileName);
+ext = path.extname(fileName);
+console.log(dname);
+console.log(bname);
+console.log(ext);
+
+D:\Mern training\NodeFiles>node hol3.js
+D:
+Mern trainingNodeFilesNodeNotessample.txt
+.txt
+
+4. D:\Mern training\NodeFiles>node
+Welcome to Node.js v16.13.0.
+Type ".help" for more information.
+> os.platform()
+'win32'
+> os.hostname()
+'BCT-LTP-G656'
+> os.release()
+'10.0.19044'
+
+5. > os.totalmem()
+16924745728
+> os.freemem()
+6015283200
+> os.cpus()
+[
+  {
+    model: 'Intel(R) Core(TM) i5-10210U CPU @ 1.60GHz',
+    speed: 2112,
+    times: {
+      user: 7190875,
+      nice: 0,
+      sys: 14020531,
+      idle: 501522781,
+      irq: 7070031
+    }
+  },
+  {
+    model: 'Intel(R) Core(TM) i5-10210U CPU @ 1.60GHz',
+    speed: 2112,
+    times: {
+      user: 3678000,
+      nice: 0,
+      sys: 3076281,
+      idle: 515979906,
+      irq: 351765
+    }
+  },
+  {
+    model: 'Intel(R) Core(TM) i5-10210U CPU @ 1.60GHz',
+    speed: 2112,
+    times: {
+      user: 9895984,
+      nice: 0,
+      sys: 6637812,
+      idle: 506200234,
+      irq: 92046
+    }
+  },
+  {
+    model: 'Intel(R) Core(TM) i5-10210U CPU @ 1.60GHz',
+    speed: 2112,
+    times: {
+      user: 4635078,
+      nice: 0,
+      sys: 2262875,
+      idle: 515836078,
+      irq: 41734
+    }
+  },
+  {
+    model: 'Intel(R) Core(TM) i5-10210U CPU @ 1.60GHz',
+    speed: 2112,
+    times: {
+      user: 8077156,
+      nice: 0,
+      sys: 5227656,
+      idle: 509429218,
+      irq: 75671
+    }
+  },
+  {
+    model: 'Intel(R) Core(TM) i5-10210U CPU @ 1.60GHz',
+    speed: 2112,
+    times: {
+      user: 7342750,
+      nice: 0,
+      sys: 3594593,
+      idle: 511796687,
+      irq: 56984
+    }
+  },
+  {
+    model: 'Intel(R) Core(TM) i5-10210U CPU @ 1.60GHz',
+    speed: 2112,
+    times: {
+      user: 8621468,
+      nice: 0,
+      sys: 4176062,
+      idle: 509936500,
+      irq: 80156
+    }
+  },
+  {
+    model: 'Intel(R) Core(TM) i5-10210U CPU @ 1.60GHz',
+    speed: 2112,
+    times: {
+      user: 5448218,
+      nice: 0,
+      sys: 4139734,
+      idle: 513146078,
+      irq: 37531
+    }
+  }
+]
+
+6. ee = new events.EventEmitter();
+ee.on("Step1", () => console.log("Step 1: Start a Car in Neutral"));
+ee.on("Step2", () => console.log("Step 2: Shift into First Gear"));
+ee.on("Step3", () => console.log("Step 3: Get the Car in Motion"));
+ee.on("Step4", () => console.log("Step 4: Upshift into Higher Gears"));
+ee.on("Step5", () => console.log("Step 5: Downshift to Lower Gears"));
+ee.on("Step6", () => console.log("Step 6: Stop a Manual Car"));
+ee.emit("Step1");
+ee.emit("Step2");
+ee.emit("Step3");
+ee.emit("Step4");
+ee.emit("Step5");
+ee.emit("Step6");
+
+D:\Mern training\NodeFiles>node hol3.js
+Step 1: Start a Car in Neutral
+Step 2: Shift into First Gear
+Step 3: Get the Car in Motion
+Step 4: Upshift into Higher Gears
+Step 5: Downshift to Lower Gears
+Step 6: Stop a Manual Car
+      ENOLCK: 39,
+
+7. var data;
+const readerStream = fs.createReadStream("./sample.txt");
+readerStream.setEncoding("utf-8");
+readerStream.on("data", (chunk) => {
+  data += chunk;
+});
+readerStream.on("end", () => {
+  console.log(data);
+});
+readerStream.on("error", (err) => {
+  console.error(err.stack);
+});
+
+D:\Mern training\NodeFiles>node hol3.js
+Program endedUT: 138,
+File content 2File content 3
+      EWOULDBLOCK: 140,
+
+8. const readableStream = fs.createReadStream("./sample.txt");
+var data = "";
+var chunk;
+var vowel = 0;
+var consonant = 0;
+readableStream.setEncoding("utf-8");
+readableStream.on("readable", () => {
+  while ((chunk = readableStream.read(1)) != null) {
+    data += chunk;
+    if (["a", "e", "i", "o", "u"].includes(chunk.toLowerCase().trim())) {
+      vowel++;
+    } else {
+      consonant++;
+    }
+  }
+});
+readableStream.on("end", () => {
+  console.log(data);
+  console.log(`Vowels: ${vowel}`);
+  console.log(`Consonants: ${consonant}`);
+  console.log(`Vowel percent: ${(vowel / data.length) * 100}%`);
+  console.log(`Consonant percent: ${(consonant / data.length) * 100}%`);
+});
+
+A simple text khgt hfvtrsre gereytjh fctx jbhj
+Vowels: 7
+Consonants: 39
+Vowel percent: 15.217391304347828%
+Consonant percent: 84.78260869565217%
+
+12. const {pipeline} = require('stream')
+const zlib = require('zlib')
+pipeline(
+  fs.createReadStream("./sample.txt"),
+  zlib.createGzip(),
+  fs.createWriteStream("./sample.gz"),
+  (err) => {
+    if (err) {
+      console.error("Pipeline failed", err);
+    } else {
+      console.timeLog("Pipeline successful");
+    }
+  }
+);
+
+D:\Mern training\NodeFiles>node hol3.js
+(node:40372) Warning: No such label 'Pipeline successful' for console.timeLog()
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
