@@ -220,6 +220,15 @@ Consonants: 39
 Vowel percent: 15.217391304347828%
 Consonant percent: 84.78260869565217%
 
+11. const crypto = require("crypto");
+const hash = crypto.createHash("sha512");
+const data = hash.update("./sample.txt", "utf-8");
+const gen_hash = data.digest("hex");
+console.log("hash : " + gen_hash);
+
+D:\Mern training\NodeFiles\NodeHOL3>node hol3.js
+hash : c053780bebd11086a4428d7491b0ad052387886a7bffa126d9be7622ceae1317b480fc4137810ada1b388227fb08aac30027596f1a7847e1cf1687c2042b2053
+
 12. const {pipeline} = require('stream')
 const zlib = require('zlib')
 pipeline(

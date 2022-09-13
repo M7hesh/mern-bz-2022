@@ -1,126 +1,170 @@
 // 1.
-// const bar = () => console.log("bar");
-// const baz = () => console.log("baz");
-// const foo = () => {
-//   console.log("foo");
-//   bar();
-//   baz();
-// };
-// foo();
+const bar = () => console.log("bar");
+const baz = () => console.log("baz");
+const foo = () => {
+  console.log("foo");
+  bar();
+  baz();
+};
+foo();
+// OUTPUT: D:\Mern training\NodeFiles>node hol2.js
+// foo
+// bar
+// baz
 
-// 2.
-// console.log("Start..");
-// setTimeout(() => {
-//   console.log("From callback..........");
-// }, 0);
-// console.log("End...");
+// 2.a
+setTimeout(() => {
+  console.log("From callback..........");
+}, 5);
+//  D:\Mern training\NodeFiles>node hol2.js
+// From callback..........
 
-// 3.
-// var $ = function (id) {
-//   return document.getElementById(id);
-// };
-// window.onload = function () {
-//   console.log("Start.....before function....");
-//   $("press").addEventListener("click", myFunction);
-//   console.log("Start...2..before function....");
-//   function myFunction() {
-//     console.log("Inside function.....");
-//   }
-//   console.log("End.....after function...");
-// };
+// 2.b
+console.log("Start..");
+setTimeout(() => {
+  console.log("From callback..........");
+}, 5);
+console.log("End...");
+//  D:\Mern training\NodeFiles>node hol2.js
+// Start..
+// End...
+// From callback..........
+
+// 2.c
+console.log("Start..");
+setTimeout(() => {
+  console.log("From callback..........");
+}, 0);
+console.log("End...");
+// D:\Mern training\NodeFiles>node hol2.js
+// Start..
+// End...
+// From callback..........
+// No, execution sequence remains same as with 5 ms timeout
+
+// 2.d console.log is executed directly by Call stack,
+// whereas setTimeout is stored in callback queue first and
+// then is executed by call stack once it gets free/unoccupied.
 
 // 4.
-// const placeOrder = (itemsInCart) => {
-//   if (!itemsInCart) {
-//     throw new Error("Cart is empty");
-//   }
-//   amazon.createNewOrder(itemsInCart, (newOrder, err) => {
-//     if (err) throw new Error(err);
-//     amazon.proceedToPayment(newOrder, (orderAmount, err) => {
-//       if (err) throw new Error(err);
-//       amazon.showOrderSummary(orderAmount, (orderDetails, err) => {
-//         if (err) throw new Error(err);
-//         amazon.updateWallet(orderDetails, (walletDetails, err) => {
-//           if (err) throw new Error();
-//           console.log("Order placed!");
-//         });
-//       });
-//     });
-//   });
-// };
+const placeOrder = (itemsInCart) => {
+  if (!itemsInCart) {
+    throw new Error("Cart is empty");
+  }
+  amazon.createNewOrder(itemsInCart, (newOrder, err) => {
+    if (err) throw new Error(err);
+    amazon.proceedToPayment(newOrder, (orderAmount, err) => {
+      if (err) throw new Error(err);
+      amazon.showOrderSummary(orderAmount, (orderDetails, err) => {
+        if (err) throw new Error(err);
+        amazon.updateWallet(orderDetails, (walletDetails, err) => {
+          if (err) throw new Error();
+          console.log("Order placed!");
+        });
+      });
+    });
+  });
+};
 
-// 5.
-// var $ = function (id) {
-//   return document.getElementById(id);
-// };
-// window.onload = function () {
-//   $("divId").addEventListener("click", myFunction);
-//   function myFunction() {
-//     $("divId").innerHTML = "Go";
-//     setTimeout(() => {
-//       $("divId").style.borderRadius = "100px";
-//       setTimeout(() => {
-//         $("divId").style.background = "red";
-//         setTimeout(() => {
-//           $("divId").style.borderRadius = "0px";
-//           setTimeout(() => {
-//             $("divId").style.background = "green";
-//             setTimeout(() => {
-//               $("divId").style.background = "white";
-//             }, 500);
-//           }, 500);
-//         }, 1000);
-//       }, 500);
-//     }, 1000);
-//   }
-// };
-
-// 6.a. new Promise(() => {})
-// 6.b.
-// function getPromise() {
-//   return new Promise((resolve, reject) => {
-//     try {
-//       // uncomment to test reject()
-//       // throw new Error();
-//       resolve("I am getting resolved");
-//     } catch (err) {
-//       reject("Oops! Rejected");
-//     }
-//   });
+// 6.a.
+var p = new Promise(() => {});
+// undefined
+// > p
+// Promise {
+//   <pending>,
+//   [Symbol(async_id_symbol)]: 1260,
+//   [Symbol(trigger_async_id_symbol)]: 5,
+//   [Symbol(destroyed)]: { destroyed: false }
 // }
-// getPromise()
-//   .then((val) => console.log(val))
-//   .catch((err) => console.log(err));
+
+// 6.b.
+function getPromise() {
+  return new Promise((resolve, reject) => {
+    try {
+      // uncomment to test reject
+      // throw new Error();
+      resolve("I am getting resolved");
+    } catch (err) {
+      reject("Oops! Rejected");
+    }
+  });
+}
+getPromise()
+  .then((val) => console.log(val))
+  .catch((err) => console.log(err));
+// D:\Mern training\NodeFiles>node hol2.js
+// I am getting resolved
+
+// D:\Mern training\NodeFiles>node hol2.js
+// Oops! Rejected
 
 // 6.c
-// var a = new Promise((res, rej) => {
-//   res(5);
-// });
-// var b = a.then((val) => val * 2);
-// var c = b.then((val) => val * 2);
+var a = new Promise((res, rej) => {
+  res(5);
+});
+var b = a.then((val) => val * 2);
+var c = b.then((val) => val * 2);
+// > b
+// Promise {
+//   10,
+//   [Symbol(async_id_symbol)]: 443,
+//   [Symbol(trigger_async_id_symbol)]: 178,
+//   [Symbol(destroyed)]: { destroyed: false }
+// }
+// > c
+// Promise {
+//   20,
+//   [Symbol(async_id_symbol)]: 713,
+//   [Symbol(trigger_async_id_symbol)]: 443,
+//   [Symbol(destroyed)]: { destroyed: false }
+// }
 
-// 7;.
-// console.log("start");
-// setTimeout(() => {
-//   console.log("Timeout");
-// }, 0);
-// Promise.resolve("Promise").then((res) => console.log(res));
-// console.log("end");
+// 7.
+console.log("start");
+setTimeout(() => {
+  console.log("Timeout");
+}, 0);
+Promise.resolve("Promise").then((res) => console.log(res));
+console.log("end");
+// D:\Mern training\NodeFiles>node hol2.js
+// Start
+// End
+// Promise
+// Timeout
+// Execution order:
+// 	1. > Start
+// 	2. callback function of setTimeout goes from the webapi to the Macrotask queue
+// 	3. promise's resolve goes directly into microtask queue
+// 	4. > End
+// 	5. > Promise (microtask queue is empty)
+// 	6. > Timeout (macrotask queue is empty)
 
 // 8.
-// function myFunc() {
-//   return new Promise((res, rej) => {
-//     res(console.log("Resolved......."));
-//   });
+function myFunc() {
+  return new Promise((res, rej) => {
+    res(console.log("Resolved......."));
+  });
+}
+// > myFunc()
+// Resolved......
+// Promise {
+//   undefined,
+//   [Symbol(async_id_symbol)]: 597,
+//   [Symbol(trigger_async_id_symbol)]: 5,
+//   [Symbol(destroyed)]: { destroyed: false }
 // }
 
 // 9.
-// const prom = () => Promise.resolve("Promise......");
-// async function myFunction() {
-//   console.log("In function");
-//   const res = await prom();
-//   console.log(res);
-// }
-// console.log("Before calling myfunction");
-// myFunction();
-// console.log("After calling myfunction");
+const prom = () => Promise.resolve("Promise......");
+async function myFunction() {
+  console.log("In function");
+  const res = await prom();
+  console.log(res);
+}
+console.log("Before calling myfunction");
+myFunction();
+console.log("After calling myfunction");
+// Before calling myfunction
+// In function
+// After calling myfunction
+// Promise......
