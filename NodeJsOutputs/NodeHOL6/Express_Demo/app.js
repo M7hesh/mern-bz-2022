@@ -2,10 +2,9 @@ const express = require("express");
 const path = require("path");
 
 const app = express();
-// app.use(express.static(__dirname + "./public"));
+app.use(express.static("./public"));
 app.get("/", (req, res) => {
-  // res.sendFile(path.resolve(__dirname, "./future_value/index.html"));
-  app.use("/index.html", express.static(__dirname + "./public"));
+  res.sendFile(path.resolve(__dirname, "./future_value/index.html"));
   res.status(200);
 });
 
