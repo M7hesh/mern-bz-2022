@@ -214,6 +214,19 @@ readableStream.on("end", () => {
   console.log(`Consonant percent: ${(consonant / data.length) * 100}%`);
 });
 
+9.
+const readable = fs.createReadStream("./sample.txt");
+readable.setEncoding("utf-8");
+const copy1 = fs.createWriteStream("sampleCopy1.txt");
+const copy2 = fs.createWriteStream("sampleCopy2.txt");
+readable.pipe(copy1);
+readable.pipe(copy2);
+console.log("Program Ended");
+
+2 new files created
+D:\Mern training\NodeFiles\NodeHOL3>node hol3.js
+Program Ended
+
 A simple text khgt hfvtrsre gereytjh fctx jbhj
 Vowels: 7
 Consonants: 39

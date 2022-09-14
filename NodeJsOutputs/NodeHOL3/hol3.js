@@ -105,12 +105,21 @@ const zlib = require("zlib");
 //   console.log(`Consonant percent: ${(consonant / data.length) * 100}%`);
 // });
 
+// 9.
+// const readable = fs.createReadStream("./sample.txt");
+// readable.setEncoding("utf-8");
+// const copy1 = fs.createWriteStream("sampleCopy1.txt");
+// const copy2 = fs.createWriteStream("sampleCopy2.txt");
+// readable.pipe(copy1);
+// readable.pipe(copy2);
+// console.log("Program Ended");
+
 // 11.
-const crypto = require("crypto");
-const hash = crypto.createHash("sha512");
-const data = hash.update("./sample.txt", "utf-8");
-const gen_hash = data.digest("hex");
-console.log("hash : " + gen_hash);
+// const crypto = require("crypto");
+// const hash = crypto.createHash("sha512");
+// const data = hash.update("./sample.txt", "utf-8");
+// const gen_hash = data.digest("hex");
+// console.log("hash : " + gen_hash);
 
 // OUTPUT: D:\MernTraining\NodeFiles\NodeHOL3>node hol3.js
 // hash : c053780bebd11086a4428d7491b0ad052387886a7bffa126d9be7622ceae1317b480fc4137810ada1b388227fb08aac30027596f1a7847e1cf1687c2042b2053
