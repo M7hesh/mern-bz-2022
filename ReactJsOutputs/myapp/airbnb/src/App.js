@@ -2,19 +2,26 @@ import Navbar from "./Components/Navbar";
 import Hero from "./Components/Hero";
 import "./App.css";
 import Card from "./Components/Card";
+import data from "./data";
+
 function App() {
   return (
     <div className="App">
       <Navbar />
       {/* <Hero /> */}
-      <Card
-        heroImg="./katie-zaferes.png"
-        ratings="5.0"
-        reviews="(6)"
-        country="USA"
-        heroName="Katie Zaferes"
-        price="$135"
-      />
+      {data.map((obj) => {
+        return (
+          <Card
+            heroImg={obj.coverImg}
+            ratings={obj.stats.rating}
+            reviews={obj.stats.reviewCount}
+            country={obj.location}
+            title={obj.title}
+            price={obj.price}
+            openSpots={obj.openSpots}
+          />
+        );
+      })}
     </div>
   );
 }

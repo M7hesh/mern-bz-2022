@@ -32,7 +32,6 @@ function App() {
   return (
     <div className="contacts">
       {CONTACT_DATA.map((contact) => {
-        console.log(contact);
         const { imgPath, contactName, phone, mail } = contact;
         return (
           <Contact
