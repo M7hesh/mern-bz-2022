@@ -32,7 +32,12 @@ header {
 }
 
 main {
+    width: 60%;
     padding: 36px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
 }
 
 form {
@@ -56,8 +61,41 @@ form {
     color: white;
     border: none;
     cursor: pointer;
+    height: 40px;
+}
+
+.meme {
+    position: relative;
+    width: 90%;
+    margin: auto;
 }
 
 .meme-image {
     width: 100%;
+    grid-column: 1/-1;
 }
+
+/* CSS Reference: https://scrimba.com/scrim/c6K77um?pl=p7P5Hd */
+.meme > h2 {
+    position: absolute;
+    width: 80%;
+    text-align: center;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 0 5px;
+    font-family: impact, sans-serif;
+    font-size: 2em;
+    text-transform: uppercase;
+    color: white;
+    letter-spacing: 1px;
+}
+
+.bottom {
+    bottom: 0;
+}
+  
+.top {
+    top: 0;
+}
+
+

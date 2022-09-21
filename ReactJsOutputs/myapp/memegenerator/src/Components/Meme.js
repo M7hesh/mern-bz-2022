@@ -41,18 +41,25 @@ const Meme = () => {
           type="text"
           placeholder="Top text"
           onChange={textHandler1}
+          value={topText}
         ></input>
         <input
           className="form--input"
           type="text"
           placeholder="Bottom text"
           onChange={textHandler2}
+          value={bottomText}
         ></input>
-        <img className="meme-image" src={newImageUrl} alt=""></img>
         <button className="form--button" onClick={getNewMeme}>
           Get a new meme image
         </button>
+        {/* <img className="meme-image" src={newImageUrl} alt=""></img> */}
       </form>
+      <div className="meme">
+        <img className="meme-image" src={newImageUrl} alt=""></img>
+        <h2 className="top">{topText}</h2>
+        <h2 className="bottom">{bottomText}</h2>
+      </div>
     </main>
   );
 };
