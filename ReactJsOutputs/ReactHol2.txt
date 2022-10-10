@@ -1,0 +1,19 @@
+React HOL 2
+
+Q6.
+D:\MernTraining\ReactFiles>node
+Welcome to Node.js v16.13.0.
+Type ".help" for more information.
+> const nums = [1,2,3,4,5]
+undefined
+> nums.map(n => n*n)
+[ 1, 4, 9, 16, 25 ]
+> const names = ["alice","bob","charlie","danielle"]
+undefined
+> names.map(name => name[0].toUpperCase() + name.slice(1).toLowerCase())
+[ 'Alice', 'Bob', 'Charlie', 'Danielle' ]
+> const pokemon = ["Bulbasaur", "Charmander", "Squirtle"]
+undefined
+> pokemon.map( value => '<p>' + value + '</p>')
+[ '<p>Bulbasaur</p>', '<p>Charmander</p>', '<p>Squirtle</p>' ]
+> 
